@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kurinji Resort — Admin Portal</title>
+<link rel="icon" href="https://res.cloudinary.com/lfgnusmd/image/upload/v1784813172/Screenshot_2026-07-23_185558_pe82xx.png">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{
+  --forest-deep:#561148;--forest:#901d78;--terracotta:#c1652f;--terracotta-dark:#a34f22;
+  --gold:#c9a15a;--cream:#f7f3e8;--cream-2:#efe8d6;--charcoal:#201f1a;
+  --shadow:0 20px 50px rgba(22,48,37,.15);--radius:16px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Work Sans',sans-serif;background:var(--cream);color:var(--charcoal);min-height:100vh;}
+h1,h2,h3{font-family:'Fraunces',serif;color:var(--forest-deep);}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:100px;font-weight:600;font-size:.88rem;cursor:pointer;border:none;transition:.25s;font-family:'Work Sans',sans-serif;}
+.btn-primary{background:var(--terracotta);color:#fff;}
+.btn-primary:hover{background:var(--terracotta-dark);}
+.btn-outline{background:#fff;border:1.5px solid #e2ddc9;color:var(--forest-deep);}
+.btn-outline:hover{border-color:var(--terracotta);color:var(--terracotta);}
+.btn-sm{padding:8px 16px;font-size:.78rem;}
+
+/* LOGIN GATE */
+.login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,var(--forest-deep),var(--forest));}
+.login-box{background:#fff;border-radius:20px;padding:44px;max-width:380px;width:90%;box-shadow:var(--shadow);text-align:center;}
+.login-box img{height:56px;width:56px;border-radius:50%;margin-bottom:14px;}
+.login-box h2{margin-bottom:6px;}
+.login-box p{color:#8c8c7f;font-size:.9rem;margin-bottom:24px;}
+.login-box input{width:100%;padding:14px 16px;border:1.5px solid #e2ddc9;border-radius:10px;margin-bottom:14px;font-family:'Work Sans',sans-serif;font-size:.95rem;}
+.login-box .btn{width:100%;justify-content:center;}
+.login-error{color:var(--terracotta-dark);font-size:.82rem;margin-bottom:10px;display:none;}
+
+/* DASHBOARD */
+.dash{display:none;}
+.dash.active{display:block;}
+.topbar{background:var(--forest-deep);color:#fff;padding:18px 0;position:sticky;top:0;z-index:100;}
+.topbar-inner{max-width:1200px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-brand{display:flex;align-items:center;gap:12px;}
+.topbar-brand img{height:38px;width:38px;border-radius:50%;}
+.topbar-brand span{font-family:'Fraunces',serif;font-size:1.1rem;}
+.container{max-width:1200px;margin:0 auto;padding:36px 24px;}
+.tabs{display:flex;gap:10px;margin-bottom:30px;flex-wrap:wrap;}
+.tab-btn{padding:11px 22px;border-radius:100px;background:#fff;border:1.5px solid #e2ddc9;font-weight:600;font-size:.86rem;cursor:pointer;color:#6d6d61;}
+.tab-btn.active{background:var(--forest-deep);color:#fff;border-color:var(--forest-deep);}
+.panel{display:none;}
+.panel.active{display:block;}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:34px;}
+.stat-card{background:#fff;border-radius:14px;padding:24px;box-shadow:0 8px 20px rgba(22,48,37,.06);}
+.stat-card i{color:var(--terracotta);font-size:1.3rem;margin-bottom:10px;}
+.stat-card strong{display:block;font-family:'Fraunces',serif;font-size:1.7rem;color:var(--forest-deep);}
+.stat-card span{font-size:.8rem;color:#8c8c7f;}
+
+/* ROOMS MANAGEMENT */
+.room-manage-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.room-manage-card{background:#fff;border-radius:16px;padding:26px;box-shadow:0 8px 20px rgba(22,48,37,.06);}
+.room-manage-card h3{margin-bottom:18px;font-size:1.15rem;}
+.rm-field{margin-bottom:14px;}
+.rm-field label{display:block;font-size:.78rem;font-weight:600;color:var(--forest-deep);margin-bottom:6px;}
+.rm-field input{width:100%;padding:11px 14px;border:1.5px solid #e2ddc9;border-radius:10px;font-family:'Work Sans',sans-serif;}
+.rm-save{width:100%;justify-content:center;margin-top:6px;}
+.rm-status{font-size:.78rem;color:var(--forest);margin-top:8px;text-align:center;display:none;}
+
+/* BOOKINGS TABLE */
+.table-toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:12px;}
+.filter-group{display:flex;gap:8px;flex-wrap:wrap;}
+.table-wrap{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 8px 20px rgba(22,48,37,.06);overflow-x:auto;}
+table{width:100%;border-collapse:collapse;min-width:900px;}
+th{background:var(--cream-2);text-align:left;padding:14px 16px;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;color:var(--forest-deep);}
+td{padding:14px 16px;font-size:.88rem;border-top:1px solid #f0ebda;}
+.status-pill{font-size:.72rem;font-weight:700;padding:5px 12px;border-radius:100px;text-transform:capitalize;}
+.status-pill.upcoming{background:#f4e5ef;color:var(--forest);}
+.status-pill.completed{background:#f0e6d8;color:var(--terracotta-dark);}
+.mark-btn{background:none;border:1px solid #e2ddc9;padding:6px 12px;border-radius:100px;font-size:.72rem;cursor:pointer;color:#6d6d61;}
+.mark-btn:hover{border-color:var(--terracotta);color:var(--terracotta);}
+.empty-row td{text-align:center;color:#a8a898;padding:40px;}
+
+/* ROOM NUMBER ALLOCATION */
+.room-no-pill{display:inline-block;font-size:.76rem;font-weight:700;padding:6px 14px;border-radius:100px;cursor:pointer;transition:.2s;white-space:nowrap;}
+.room-no-pill.allocated{background:#e0f2e9;color:#1c7a4d;border:1px solid #b7e3cb;}
+.room-no-pill.allocated:hover{background:#c9ecdb;}
+.room-no-pill.unallocated{background:#fde4e1;color:#c23b2e;border:1px solid #f6bdb5;}
+.room-no-pill.unallocated:hover{background:#fbd0ca;}
+
+/* DETAILS MODAL */
+.dmodal-overlay{position:fixed;inset:0;background:rgba(20,10,18,.55);backdrop-filter:blur(3px);z-index:2000;display:none;align-items:center;justify-content:center;padding:20px;}
+.dmodal-overlay.active{display:flex;}
+.dmodal-box{background:#fff;border-radius:20px;max-width:520px;width:100%;padding:32px;position:relative;max-height:88vh;overflow-y:auto;}
+.dmodal-close{position:absolute;top:18px;right:18px;width:34px;height:34px;border-radius:50%;background:var(--cream);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--forest-deep);}
+.dmodal-box h3{margin-bottom:4px;}
+.dmodal-sub{color:#8c8c7f;font-size:.85rem;margin-bottom:22px;}
+.dmodal-section{margin-bottom:22px;}
+.dmodal-section h4{font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;color:var(--forest-deep);margin-bottom:10px;}
+.dmodal-amounts{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.dmodal-field label{display:block;font-size:.78rem;font-weight:600;color:var(--forest-deep);margin-bottom:6px;}
+.dmodal-field input{width:100%;padding:11px 14px;border:1.5px solid #e2ddc9;border-radius:10px;font-family:'Work Sans',sans-serif;}
+.dmodal-field.readonly input{background:var(--cream-2);color:var(--terracotta-dark);font-weight:700;}
+.dmodal-save{margin-top:10px;}
+.food-add-row{display:flex;gap:8px;margin-bottom:14px;}
+.food-add-row input{flex:1;padding:10px 12px;border:1.5px solid #e2ddc9;border-radius:10px;font-family:'Work Sans',sans-serif;font-size:.85rem;}
+.food-add-row input.amt{max-width:100px;}
+.food-list{display:flex;flex-direction:column;gap:8px;max-height:180px;overflow-y:auto;}
+.food-item{display:flex;justify-content:space-between;align-items:center;background:var(--cream);border-radius:10px;padding:10px 14px;font-size:.85rem;}
+.food-item .fi-name{font-weight:600;color:var(--forest-deep);}
+.food-item .fi-amt{color:var(--terracotta-dark);font-weight:700;margin-left:10px;}
+.food-item .fi-del{cursor:pointer;color:#c23b2e;font-size:.8rem;margin-left:12px;}
+.food-empty{color:#a8a898;font-size:.82rem;text-align:center;padding:10px;}
+.food-total-row{display:flex;justify-content:space-between;padding-top:10px;margin-top:8px;border-top:1px dashed #e2ddc9;font-weight:700;color:var(--forest-deep);}
+
+@media(max-width:900px){
+  .room-manage-grid{grid-template-columns:1fr;}
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-box">
+    <img src="https://res.cloudinary.com/lfgnusmd/image/upload/v1784813172/Screenshot_2026-07-23_185558_pe82xx.png" alt="Kurinji Resort">
+    <h2>Admin Portal</h2>
+    <p>Kurinji Resort — staff access only</p>
+    <p class="login-error" id="loginError">Incorrect password. Please try again.</p>
+    <input type="password" id="adminPassword" placeholder="Enter admin password" onkeydown="if(event.key==='Enter') tryLogin()">
+    <button class="btn btn-primary" onclick="tryLogin()">Login</button>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="dash" id="dash">
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="topbar-brand">
+        <img src="https://res.cloudinary.com/lfgnusmd/image/upload/v1784813172/Screenshot_2026-07-23_185558_pe82xx.png" alt="">
+        <span>Kurinji Resort · Admin</span>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <a href="index.html" class="btn btn-outline btn-sm" style="background:transparent;border-color:rgba(255,255,255,.3);color:#fff;"><i class="fas fa-globe"></i> Customer Site</a>
+        <button class="btn btn-outline btn-sm" onclick="logout()"><i class="fas fa-right-from-bracket"></i> Logout</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-card"><i class="fas fa-bed"></i><strong id="statTotalRooms">—</strong><span>Total Rooms</span></div>
+      <div class="stat-card"><i class="fas fa-calendar-check"></i><strong id="statUpcoming">—</strong><span>Upcoming Bookings</span></div>
+      <div class="stat-card"><i class="fas fa-circle-check"></i><strong id="statCompleted">—</strong><span>Completed Stays</span></div>
+      <div class="stat-card"><i class="fas fa-indian-rupee-sign"></i><strong id="statRevenue">—</strong><span>Total Booking Value</span></div>
+    </div>
+
+    <div class="tabs">
+      <div class="tab-btn active" data-panel="bookingsPanel" onclick="switchPanel('bookingsPanel')">Bookings</div>
+      <div class="tab-btn" data-panel="roomsPanel" onclick="switchPanel('roomsPanel')">Manage Rooms</div>
+    </div>
+
+    <!-- BOOKINGS PANEL -->
+    <div class="panel active" id="bookingsPanel">
+      <div class="table-toolbar">
+        <div class="filter-group">
+          <div class="tab-btn active" data-filter="all" onclick="filterBookings('all')">All</div>
+          <div class="tab-btn" data-filter="upcoming" onclick="filterBookings('upcoming')">Upcoming</div>
+          <div class="tab-btn" data-filter="completed" onclick="filterBookings('completed')">Completed</div>
+        </div>
+        <button class="btn btn-primary" onclick="exportExcel()"><i class="fas fa-file-excel"></i> Export Excel Report</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Guest</th><th>Phone</th><th>Room</th><th>Room No.</th><th>Check-in</th><th>Check-out</th>
+              <th>Guests</th><th>Total</th><th>Status</th><th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="bookingsTable">
+            <tr class="empty-row"><td colspan="10">Loading bookings...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ROOMS PANEL -->
+    <div class="panel" id="roomsPanel">
+      <div class="room-manage-grid" id="roomManageGrid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- BOOKING DETAILS MODAL -->
+<div class="dmodal-overlay" id="detailsModal">
+  <div class="dmodal-box">
+    <div class="dmodal-close" onclick="closeDetails()"><i class="fas fa-xmark"></i></div>
+    <h3 id="dGuestName">Guest</h3>
+    <p class="dmodal-sub" id="dBookingMeta">Room · Dates</p>
+
+    <div class="dmodal-section">
+      <h4>Payment</h4>
+      <div class="dmodal-amounts">
+        <div class="dmodal-field">
+          <label>Total Amount</label>
+          <input type="text" id="dTotal" readonly>
+        </div>
+        <div class="dmodal-field">
+          <label>Advance Received (₹)</label>
+          <input type="number" id="dAdvance" min="0" placeholder="0">
+        </div>
+      </div>
+      <div class="dmodal-field readonly" style="margin-top:12px;">
+        <label>Balance Due</label>
+        <input type="text" id="dBalance" readonly>
+      </div>
+      <button class="btn btn-primary btn-sm dmodal-save" onclick="saveAdvance()"><i class="fas fa-floppy-disk"></i> Save Advance</button>
+    </div>
+
+    <div class="dmodal-section">
+      <h4>Food Track</h4>
+      <div class="food-add-row">
+        <input type="text" id="dFoodName" placeholder="Item eaten (e.g. Fish curry meal)">
+        <input type="number" id="dFoodAmt" class="amt" placeholder="₹ Amount">
+        <button class="btn btn-primary btn-sm" onclick="addFoodItem()"><i class="fas fa-plus"></i></button>
+      </div>
+      <div class="food-list" id="dFoodList"></div>
+      <div class="food-total-row"><span>Food Total</span><span id="dFoodTotal">₹0</span></div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs, doc, getDoc, setDoc, updateDoc, Timestamp }
+  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+// TODO: Use the SAME Firebase config as index.html
+const firebaseConfig = {
+  apiKey: "AIzaSyDSDvs3oA3664boC301pS0MjB_QsOSrXVk",
+  authDomain: "kurinji-resort.firebaseapp.com",
+  projectId: "kurinji-resort",
+  storageBucket: "kurinji-resort.firebasestorage.app",
+  messagingSenderId: "157304337365",
+  appId: "1:157304337365:web:38a14073e1444f3b5d435c"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+signInAnonymously(auth).catch(err => console.warn("Auth error:", err));
+
+const ADMIN_PASSWORD = "Kurinji@admin2026";
+const ROOM_TYPES = [
+  { id:'standard', name:'Standard Room', defaultRate:4000, defaultCount:4 },
+  { id:'deluxe', name:'Deluxe Room', defaultRate:6000, defaultCount:4 },
+  { id:'premium', name:'Premium Villa', defaultRate:20000, defaultCount:1 }
+];
+
+window.tryLogin = function(){
+  const val = document.getElementById('adminPassword').value;
+  if(val === ADMIN_PASSWORD){
+    sessionStorage.setItem('kurinjiAdminAuth', 'true');
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('dash').classList.add('active');
+    initDashboard();
+  } else {
+    document.getElementById('loginError').style.display = 'block';
+  }
+};
+window.logout = function(){
+  sessionStorage.removeItem('kurinjiAdminAuth');
+  location.reload();
+};
+if(sessionStorage.getItem('kurinjiAdminAuth') === 'true'){
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('dash').classList.add('active');
+  initDashboard();
+}
+
+let allBookings = [];
+
+async function initDashboard(){
+  await loadRoomsManage();
+  await loadBookings();
+}
+
+async function loadRoomsManage(){
+  const grid = document.getElementById('roomManageGrid');
+  grid.innerHTML = '';
+  let totalRooms = 0;
+  for(const rt of ROOM_TYPES){
+    const ref = doc(db, "rooms", rt.id);
+    let snap;
+    try{
+      snap = await getDoc(ref);
+      if(!snap.exists()){
+        await setDoc(ref, { name: rt.name, rate: rt.defaultRate, count: rt.defaultCount });
+        snap = await getDoc(ref);
+      }
+    }catch(e){ console.warn('Firebase not configured yet.', e); }
+    const data = snap && snap.exists() ? snap.data() : { name: rt.name, rate: rt.defaultRate, count: rt.defaultCount };
+    totalRooms += Number(data.count || 0);
+
+    grid.insertAdjacentHTML('beforeend', `
+      <div class="room-manage-card">
+        <h3>${data.name}</h3>
+        <div class="rm-field"><label>Rate per night (₹)</label><input type="number" id="rate-${rt.id}" value="${data.rate}"></div>
+        <div class="rm-field"><label>Room Count</label><input type="number" id="count-${rt.id}" value="${data.count}"></div>
+        <button class="btn btn-primary rm-save" onclick="saveRoom('${rt.id}')"><i class="fas fa-floppy-disk"></i> Save Changes</button>
+        <p class="rm-status" id="status-${rt.id}">Saved ✓</p>
+      </div>
+    `);
+  }
+  document.getElementById('statTotalRooms').textContent = totalRooms;
+}
+
+window.saveRoom = async function(roomId){
+  const rate = parseInt(document.getElementById(`rate-${roomId}`).value);
+  const count = parseInt(document.getElementById(`count-${roomId}`).value);
+  const rt = ROOM_TYPES.find(r=>r.id===roomId);
+  try{
+    await setDoc(doc(db, "rooms", roomId), { name: rt.name, rate, count });
+    const status = document.getElementById(`status-${roomId}`);
+    status.style.display = 'block';
+    setTimeout(()=> status.style.display = 'none', 2000);
+    loadRoomsManage();
+  }catch(e){
+    alert('Could not save — check Firebase configuration.');
+    console.warn(e);
+  }
+};
+
+function computeStatus(b){
+  if(b.manualStatus) return b.manualStatus;
+  const today = new Date(); today.setHours(0,0,0,0);
+  const checkoutDate = new Date(b.checkout);
+  return checkoutDate < today ? 'completed' : 'upcoming';
+}
+
+async function loadBookings(){
+  const tbody = document.getElementById('bookingsTable');
+  try{
+    const snap = await getDocs(collection(db, "bookings"));
+    allBookings = [];
+    snap.forEach(d => allBookings.push({ id: d.id, ...d.data() }));
+  }catch(e){
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="10">Could not load bookings — check Firebase configuration.</td></tr>`;
+    console.warn(e);
+    return;
+  }
+  allBookings.sort((a,b) => new Date(b.checkin) - new Date(a.checkin));
+  renderBookings('all');
+  updateStats();
+}
+
+let currentFilter = 'all';
+window.filterBookings = function(f){
+  currentFilter = f;
+  document.querySelectorAll('.filter-group .tab-btn').forEach(t=>t.classList.toggle('active', t.dataset.filter===f));
+  renderBookings(f);
+};
+
+function renderBookings(filter){
+  const tbody = document.getElementById('bookingsTable');
+  const filtered = allBookings.filter(b => filter==='all' ? true : computeStatus(b)===filter);
+  if(!filtered.length){
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="10">No bookings found.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = filtered.map(b=>{
+    const status = computeStatus(b);
+    const roomNo = b.roomNumber && String(b.roomNumber).trim();
+    const roomBadge = roomNo
+      ? `<span class="room-no-pill allocated" onclick="allocateRoom('${b.id}')" title="Click to change">${roomNo}</span>`
+      : `<span class="room-no-pill unallocated" onclick="allocateRoom('${b.id}')" title="Click to allocate">Not Allocated</span>`;
+    return `<tr>
+      <td>${b.name || '—'}</td>
+      <td>${b.phone || '—'}</td>
+      <td>${b.roomName || b.roomType || '—'}</td>
+      <td>${roomBadge}</td>
+      <td>${b.checkin || '—'}</td>
+      <td>${b.checkout || '—'}</td>
+      <td>${b.guests ?? '—'}</td>
+      <td>₹${(b.total||0).toLocaleString('en-IN')}</td>
+      <td><span class="status-pill ${status}">${status}</span></td>
+      <td>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <button class="mark-btn" onclick="openDetails('${b.id}')"><i class="fas fa-circle-info"></i> Details</button>
+          ${status==='upcoming'
+            ? `<button class="mark-btn" onclick="markCompleted('${b.id}')">Mark Completed</button>`
+            : (b.manualStatus ? `<button class="mark-btn" onclick="markUpcoming('${b.id}')">Mark Upcoming</button>` : '')}
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+window.markCompleted = async function(id){
+  try{
+    await updateDoc(doc(db, "bookings", id), { manualStatus: 'completed' });
+    await loadBookings();
+  }catch(e){ alert('Could not update — check Firebase configuration.'); }
+};
+window.markUpcoming = async function(id){
+  try{
+    await updateDoc(doc(db, "bookings", id), { manualStatus: null });
+    await loadBookings();
+  }catch(e){ alert('Could not update — check Firebase configuration.'); }
+};
+
+// ===== ROOM NUMBER ALLOCATION =====
+window.allocateRoom = async function(id){
+  const booking = allBookings.find(b=>b.id===id);
+  const current = booking && booking.roomNumber ? booking.roomNumber : '';
+  const value = prompt('Enter room number to allocate (leave blank to clear):', current);
+  if(value === null) return; // cancelled
+  try{
+    await updateDoc(doc(db, "bookings", id), { roomNumber: value.trim() });
+    await loadBookings();
+  }catch(e){
+    alert('Could not update — check Firebase configuration.');
+    console.warn(e);
+  }
+};
+
+// ===== BOOKING DETAILS MODAL (advance / balance / food track) =====
+let activeDetailsId = null;
+
+window.openDetails = function(id){
+  const b = allBookings.find(x=>x.id===id);
+  if(!b) return;
+  activeDetailsId = id;
+
+  document.getElementById('dGuestName').textContent = b.name || 'Guest';
+  document.getElementById('dBookingMeta').textContent =
+    `${b.roomName || b.roomType || ''} · ${b.checkin || ''} → ${b.checkout || ''} · ${b.guests ?? ''} guests`;
+
+  const total = b.total || 0;
+  const advance = b.advanceAmount || 0;
+  document.getElementById('dTotal').value = `₹${total.toLocaleString('en-IN')}`;
+  document.getElementById('dAdvance').value = advance || '';
+  document.getElementById('dBalance').value = `₹${Math.max(0, total - advance).toLocaleString('en-IN')}`;
+
+  renderFoodList(b.foodLog || []);
+
+  document.getElementById('detailsModal').classList.add('active');
+};
+
+window.closeDetails = function(){
+  document.getElementById('detailsModal').classList.remove('active');
+  activeDetailsId = null;
+};
+
+document.getElementById('dAdvance').addEventListener('input', ()=>{
+  const b = allBookings.find(x=>x.id===activeDetailsId);
+  if(!b) return;
+  const total = b.total || 0;
+  const advance = parseFloat(document.getElementById('dAdvance').value) || 0;
+  document.getElementById('dBalance').value = `₹${Math.max(0, total - advance).toLocaleString('en-IN')}`;
+});
+
+window.saveAdvance = async function(){
+  if(!activeDetailsId) return;
+  const advance = parseFloat(document.getElementById('dAdvance').value) || 0;
+  try{
+    await updateDoc(doc(db, "bookings", activeDetailsId), { advanceAmount: advance });
+    const b = allBookings.find(x=>x.id===activeDetailsId);
+    if(b) b.advanceAmount = advance;
+    alert('Advance amount saved.');
+  }catch(e){
+    alert('Could not save — check Firebase configuration.');
+    console.warn(e);
+  }
+};
+
+function renderFoodList(foodLog){
+  const list = document.getElementById('dFoodList');
+  if(!foodLog.length){
+    list.innerHTML = `<div class="food-empty">No food items tracked yet.</div>`;
+  } else {
+    list.innerHTML = foodLog.map((f, i)=>`
+      <div class="food-item">
+        <span><span class="fi-name">${f.item}</span><span class="fi-amt">₹${(f.amount||0).toLocaleString('en-IN')}</span></span>
+        <span class="fi-del" onclick="removeFoodItem(${i})"><i class="fas fa-trash"></i></span>
+      </div>
+    `).join('');
+  }
+  const totalFood = foodLog.reduce((sum,f)=> sum + (f.amount||0), 0);
+  document.getElementById('dFoodTotal').textContent = `₹${totalFood.toLocaleString('en-IN')}`;
+}
+
+window.addFoodItem = async function(){
+  if(!activeDetailsId) return;
+  const nameEl = document.getElementById('dFoodName');
+  const amtEl = document.getElementById('dFoodAmt');
+  const name = nameEl.value.trim();
+  const amount = parseFloat(amtEl.value) || 0;
+  if(!name){ alert('Please enter what was eaten.'); return; }
+
+  const b = allBookings.find(x=>x.id===activeDetailsId);
+  if(!b) return;
+  const foodLog = [...(b.foodLog || []), { item: name, amount, addedAt: new Date().toISOString() }];
+
+  try{
+    await updateDoc(doc(db, "bookings", activeDetailsId), { foodLog });
+    b.foodLog = foodLog;
+    renderFoodList(foodLog);
+    nameEl.value = '';
+    amtEl.value = '';
+  }catch(e){
+    alert('Could not save — check Firebase configuration.');
+    console.warn(e);
+  }
+};
+
+window.removeFoodItem = async function(index){
+  if(!activeDetailsId) return;
+  const b = allBookings.find(x=>x.id===activeDetailsId);
+  if(!b) return;
+  const foodLog = [...(b.foodLog || [])];
+  foodLog.splice(index, 1);
+  try{
+    await updateDoc(doc(db, "bookings", activeDetailsId), { foodLog });
+    b.foodLog = foodLog;
+    renderFoodList(foodLog);
+  }catch(e){
+    alert('Could not save — check Firebase configuration.');
+    console.warn(e);
+  }
+};
+
+function updateStats(){
+  const upcoming = allBookings.filter(b=>computeStatus(b)==='upcoming').length;
+  const completed = allBookings.filter(b=>computeStatus(b)==='completed').length;
+  const revenue = allBookings.reduce((sum,b)=> sum + (b.total||0), 0);
+  document.getElementById('statUpcoming').textContent = upcoming;
+  document.getElementById('statCompleted').textContent = completed;
+  document.getElementById('statRevenue').textContent = '₹' + revenue.toLocaleString('en-IN');
+}
+
+window.switchPanel = function(panelId){
+  document.querySelectorAll('.tabs .tab-btn').forEach(t=>t.classList.toggle('active', t.dataset.panel===panelId));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active', p.id===panelId));
+};
+
+window.exportExcel = function(){
+  const filtered = allBookings.filter(b => currentFilter==='all' ? true : computeStatus(b)===currentFilter);
+  if(!filtered.length){ alert('No bookings to export in this filter.'); return; }
+  const rows = filtered.map(b=>{
+    const advance = b.advanceAmount || 0;
+    const total = b.total || 0;
+    const foodTotal = (b.foodLog || []).reduce((sum,f)=> sum + (f.amount||0), 0);
+    return {
+      'Guest Name': b.name || '',
+      'Phone': b.phone || '',
+      'Room Type': b.roomName || b.roomType || '',
+      'Room No.': b.roomNumber || 'Not Allocated',
+      'Check-in': b.checkin || '',
+      'Check-out': b.checkout || '',
+      'Nights': b.nights || '',
+      'Guests': b.guests || '',
+      'Extra Guests': b.extraGuests || 0,
+      'Total Amount (₹)': total,
+      'Advance Received (₹)': advance,
+      'Balance Due (₹)': Math.max(0, total - advance),
+      'Food Total (₹)': foodTotal,
+      'Status': computeStatus(b),
+      'Booked On': b.createdAt && b.createdAt.toDate ? b.createdAt.toDate().toLocaleDateString('en-IN') : ''
+    };
+  });
+  const ws = XLSX.utils.json_to_sheet(rows);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Bookings");
+  const filename = `Kurinji-Resort-Bookings-${currentFilter}-${new Date().toISOString().split('T')[0]}.xlsx`;
+  XLSX.writeFile(wb, filename);
+};
+</script>
+</body>
+</html>
