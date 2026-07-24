@@ -116,6 +116,17 @@ td{padding:14px 16px;font-size:.88rem;border-top:1px solid #f0ebda;}
   .room-manage-grid{grid-template-columns:1fr;}
   .stats-grid{grid-template-columns:repeat(2,1fr);}
 }
+@media(max-width:560px){
+  .topbar-inner{flex-direction:column;align-items:flex-start;gap:12px;}
+  .topbar-inner > div{width:100%;}
+  .topbar-inner > div:last-child{display:flex;gap:10px;}
+  .topbar-inner > div:last-child .btn{flex:1;justify-content:center;}
+  .table-toolbar{flex-direction:column;align-items:stretch;}
+  .table-toolbar .btn{width:100%;justify-content:center;}
+  .food-add-row{flex-wrap:wrap;}
+  .food-add-row input.amt{max-width:none;flex:1 1 100px;}
+  .dmodal-amounts{grid-template-columns:1fr;}
+}
 </style>
 </head>
 <body>
@@ -388,6 +399,9 @@ function renderBookings(filter){
       <td>
         <div style="display:flex;gap:6px;flex-wrap:wrap;">
           <button class="mark-btn" onclick="openDetails('${b.id}')"><i class="fas fa-circle-info"></i> Details</button>
+          ${b.confirmed
+            ? `<button class="mark-btn" style="border-color:#b7e3cb;color:#1c7a4d;" onclick="confirmBooking('${b.id}')"><i class="fas fa-check"></i> Confirmed — Resend</button>`
+            : `<button class="mark-btn" style="border-color:#25D366;color:#1c9b4b;" onclick="confirmBooking('${b.id}')"><i class="fab fa-whatsapp"></i> Confirm</button>`}
           ${status==='upcoming'
             ? `<button class="mark-btn" onclick="markCompleted('${b.id}')">Mark Completed</button>`
             : (b.manualStatus ? `<button class="mark-btn" onclick="markUpcoming('${b.id}')">Mark Upcoming</button>` : '')}
@@ -396,6 +410,34 @@ function renderBookings(filter){
     </tr>`;
   }).join('');
 }
+
+// ===== CONFIRM BOOKING → DRAFT WHATSAPP MESSAGE TO CUSTOMER =====
+window.confirmBooking = async function(id){
+  const b = allBookings.find(x=>x.id===id);
+  if(!b) return;
+  const phone = (b.phone || '').replace(/\D/g,'');
+  if(phone.length !== 10){
+    alert('This booking has no valid 10-digit phone number saved, so a WhatsApp message can\'t be drafted.');
+    return;
+  }
+
+  const msg = `Hello ${b.name || 'Guest'}, your booking at Kurinji Resort is confirmed! ✅%0A%0A`+
+    `Room: ${b.roomName || b.roomType || ''}%0ACheck-in: ${b.checkin || ''}%0ACheck-out: ${b.checkout || ''}%0A`+
+    `Guests: ${b.guests ?? ''}%0ATotal: ₹${(b.total||0).toLocaleString('en-IN')}%0A%0A`+
+    `We look forward to hosting you. See you soon!`;
+
+  // Opens WhatsApp Web/App with the message drafted in the chat box —
+  // admin reviews it and taps Send themselves, nothing is sent automatically.
+  window.open(`https://wa.me/91${phone}?text=${msg}`, '_blank');
+
+  try{
+    await updateDoc(doc(db, "bookings", id), { confirmed: true });
+    b.confirmed = true;
+    renderBookings(currentFilter);
+  }catch(e){
+    console.warn('Could not mark booking as confirmed — check Firebase configuration.', e);
+  }
+};
 
 window.markCompleted = async function(id){
   try{

@@ -264,6 +264,8 @@ section{padding:100px 0;}
 .mb-status{font-size:.72rem;font-weight:700;padding:6px 14px;border-radius:100px;text-transform:uppercase;letter-spacing:.03em;}
 .mb-status.upcoming{background:#f4e5ef;color:var(--forest);}
 .mb-status.completed{background:#f0e6d8;color:var(--terracotta-dark);}
+.mb-status.confirmed{background:#e0f2e9;color:#1c7a4d;}
+.mb-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;}
 .mb-empty{text-align:center;padding:40px;color:#a8a898;}
 
 /* ===== LOCATION ===== */
@@ -341,13 +343,18 @@ footer .socials a:hover{background:var(--terracotta);}
 
 /* ===== RESPONSIVE ===== */
 @media(max-width:960px){
-  .about-grid,.booking-grid,.loc-grid{grid-template-columns:1fr;}
+  .about-grid,.loc-grid,.jeep-grid{grid-template-columns:1fr;}
   .room-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
   .amen-grid{grid-template-columns:repeat(2,1fr);}
   .common-grid{grid-template-columns:repeat(2,1fr);}
   .common-grid .cg-item:nth-child(1){grid-column:span 2;grid-row:span 1;}
   .menu-cards{grid-template-columns:1fr;}
   .footer-grid{grid-template-columns:1fr;}
+  .jeep-visual{aspect-ratio:16/9;}
+}
+@media(max-width:520px){
+  .mb-search{flex-direction:column;}
+  .mb-search button{width:100%;justify-content:center;}
 }
 @media(max-width:768px){
   .nav-links{position:fixed;top:0;right:-100%;width:78%;height:100vh;background:var(--cream);flex-direction:column;justify-content:center;gap:28px;transition:.4s;box-shadow:-10px 0 30px rgba(0,0,0,.1);}
@@ -424,7 +431,7 @@ footer .socials a:hover{background:var(--terracotta);}
       <h3>Quick Booking</h3>
       <form id="heroBookingForm" class="sbp-form">
         <div class="form-group"><label>Full Name</label><input type="text" id="hName" required placeholder="Your name"></div>
-        <div class="form-group"><label>Phone Number</label><input type="tel" id="hPhone" required placeholder="10-digit number" pattern="[0-9]{10}"></div>
+        <div class="form-group"><label>Phone Number</label><input type="tel" id="hPhone" required placeholder="10-digit number" pattern="[0-9]{10}" inputmode="numeric" maxlength="10"></div>
         <div class="form-group"><label>Room Type</label>
           <select id="hRoomType" class="room-type-select" required>
             <option value="" disabled selected>Select room</option>
@@ -571,7 +578,7 @@ footer .socials a:hover{background:var(--terracotta);}
       <p>Enter the phone number you booked with to view your stays.</p>
     </div>
     <div class="mb-search">
-      <input type="tel" id="mbPhone" placeholder="Enter your 10-digit phone number">
+      <input type="tel" id="mbPhone" placeholder="Enter your 10-digit phone number" inputmode="numeric" maxlength="10">
       <button class="btn btn-primary" onclick="searchBookings()"><i class="fas fa-magnifying-glass"></i></button>
     </div>
     <div class="mb-tabs">
@@ -652,7 +659,7 @@ footer .socials a:hover{background:var(--terracotta);}
   </div>
   <form id="quickBookingForm" class="sbp-form">
     <div class="form-group"><label>Full Name</label><input type="text" id="qName" required placeholder="Your name"></div>
-    <div class="form-group"><label>Phone Number</label><input type="tel" id="qPhone" required placeholder="10-digit number" pattern="[0-9]{10}"></div>
+    <div class="form-group"><label>Phone Number</label><input type="tel" id="qPhone" required placeholder="10-digit number" pattern="[0-9]{10}" inputmode="numeric" maxlength="10"></div>
     <div class="form-group"><label>Room Type</label>
       <select id="qRoomType" class="room-type-select" required>
         <option value="" disabled selected>Select room</option>
@@ -832,6 +839,15 @@ window.preselectRoom = function(roomId){
 renderRoomsInstant();
 syncRoomsFromFirebase();
 
+// ===== PHONE FIELDS: digits only, capped at 10 =====
+['hPhone','qPhone','mbPhone'].forEach(id=>{
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.addEventListener('input', ()=>{
+    el.value = el.value.replace(/\D/g,'').slice(0,10);
+  });
+});
+
 // ===== REUSABLE BOOKING FORM LOGIC (powers both the main form and the quick side panel) =====
 window.updatePricingQuick = null;
 window.updatePricingHero = null;
@@ -873,8 +889,23 @@ function setupBookingForm(cfg){
     el.addEventListener('input', updatePricing);
   });
   const todayISO = new Date().toISOString().split('T')[0];
-  document.getElementById(cfg.checkin).min = todayISO;
-  document.getElementById(cfg.checkout).min = todayISO;
+  const checkinEl = document.getElementById(cfg.checkin);
+  const checkoutEl = document.getElementById(cfg.checkout);
+  checkinEl.min = todayISO;
+  checkoutEl.min = todayISO;
+
+  // Keep check-out from ever landing before (or on) the selected check-in date.
+  function syncCheckoutMin(){
+    if(!checkinEl.value) return;
+    const nextDay = new Date(checkinEl.value);
+    nextDay.setDate(nextDay.getDate() + 1);
+    const minCheckout = nextDay.toISOString().split('T')[0];
+    checkoutEl.min = minCheckout;
+    if(checkoutEl.value && checkoutEl.value <= checkinEl.value){
+      checkoutEl.value = minCheckout;
+    }
+  }
+  checkinEl.addEventListener('change', syncCheckoutMin);
 
   document.getElementById(cfg.form).addEventListener('submit', async (e)=>{
     e.preventDefault();
@@ -883,10 +914,20 @@ function setupBookingForm(cfg){
 
     const name = document.getElementById(cfg.name).value.trim();
     const phone = document.getElementById(cfg.phone).value.trim();
+    if(!/^[0-9]{10}$/.test(phone)){
+      alert('Please enter a valid 10-digit mobile number.');
+      document.getElementById(cfg.phone).focus();
+      return;
+    }
     const guests = document.getElementById(cfg.guests).value;
     const checkin = document.getElementById(cfg.checkin).value;
     const checkout = document.getElementById(cfg.checkout).value;
     const { room, nights, extraGuests, total } = pricing;
+
+    // Open the WhatsApp tab synchronously, in direct response to the tap/click —
+    // mobile Safari/Chrome block window.open() once an `await` has run first,
+    // which is why this worked on desktop but silently failed to navigate on mobile.
+    const waWindow = window.open('', '_blank');
 
     const bookingData = {
       name, phone,
@@ -908,7 +949,13 @@ function setupBookingForm(cfg){
     const msg = `Hello Kurinji Resort, I'd like to book:%0A%0A`+
       `Name: ${name}%0APhone: ${phone}%0ARoom: ${room.name}%0AGuests: ${guests} (${extraGuests} extra)%0A`+
       `Check-in: ${checkin}%0ACheck-out: ${checkout}%0ANights: ${nights}%0ATotal: ₹${total.toLocaleString('en-IN')}`;
-    window.open(`https://wa.me/919363004234?text=${msg}`, '_blank');
+    const waUrl = `https://wa.me/919363004234?text=${msg}`;
+    if(waWindow){
+      waWindow.location.href = waUrl;
+    } else {
+      // Popup got blocked anyway (rare) — fall back to a same-tab navigation.
+      window.open(waUrl, '_blank');
+    }
 
     document.getElementById('confDetails').innerHTML = `
       <div class="conf-row"><span>Guest Name</span><span>${name}</span></div>
@@ -998,7 +1045,10 @@ function renderBookings(results){
         <strong>${b.roomName || b.roomType}</strong>
         <p>${b.checkin} → ${b.checkout} · ${b.guests} guests · ₹${(b.total||0).toLocaleString('en-IN')}</p>
       </div>
-      <span class="mb-status ${status}">${status}</span>
+      <div class="mb-right">
+        <span class="mb-status ${status}">${status}</span>
+        ${b.confirmed ? `<span class="mb-status confirmed"><i class="fas fa-check"></i> Confirmed</span>` : ''}
+      </div>
     </div>`;
   }).join('');
 }
