@@ -412,6 +412,20 @@ function renderBookings(filter){
 }
 
 // ===== CONFIRM BOOKING → DRAFT WHATSAPP MESSAGE TO CUSTOMER =====
+// ===== SAFARI-SAFE WHATSAPP OPEN =====
+// iOS Safari blocks window.open() called from script far more readily than a
+// real <a> element click, even when called perfectly synchronously — so this
+// simulates an actual anchor click instead.
+function openWhatsApp(url){
+  const a = document.createElement('a');
+  a.href = url;
+  a.target = '_blank';
+  a.rel = 'noopener';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
 window.confirmBooking = async function(id){
   const b = allBookings.find(x=>x.id===id);
   if(!b) return;
@@ -428,7 +442,7 @@ window.confirmBooking = async function(id){
 
   // Opens WhatsApp Web/App with the message drafted in the chat box —
   // admin reviews it and taps Send themselves, nothing is sent automatically.
-  window.open(`https://wa.me/91${phone}?text=${msg}`, '_blank');
+  openWhatsApp(`https://wa.me/91${phone}?text=${msg}`);
 
   try{
     await updateDoc(doc(db, "bookings", id), { confirmed: true });

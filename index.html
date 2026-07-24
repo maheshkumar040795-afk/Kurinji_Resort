@@ -836,6 +836,24 @@ window.preselectRoom = function(roomId){
   closeSidePanel();
 };
 
+// ===== SAFARI-SAFE WHATSAPP OPEN =====
+// iOS Safari's popup blocker is far stricter about window.open() called from
+// script than about a real <a> element being clicked — even when window.open()
+// runs perfectly synchronously in the event handler, Safari still silently
+// blocks it in many versions (Chrome mobile is fine with it, which is why this
+// worked there but not in Safari). Simulating an actual anchor click matches
+// how the always-working floating WhatsApp button behaves, so Safari treats it
+// as a genuine user-initiated navigation.
+function openWhatsApp(url){
+  const a = document.createElement('a');
+  a.href = url;
+  a.target = '_blank';
+  a.rel = 'noopener';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
 renderRoomsInstant();
 syncRoomsFromFirebase();
 
@@ -907,7 +925,7 @@ function setupBookingForm(cfg){
   }
   checkinEl.addEventListener('change', syncCheckoutMin);
 
-  document.getElementById(cfg.form).addEventListener('submit', async (e)=>{
+  document.getElementById(cfg.form).addEventListener('submit', (e)=>{
     e.preventDefault();
     const pricing = updatePricing();
     if(!pricing){ alert('Please select a room type.'); return; }
@@ -924,39 +942,22 @@ function setupBookingForm(cfg){
     const checkout = document.getElementById(cfg.checkout).value;
     const { room, nights, extraGuests, total } = pricing;
 
-    // Open the WhatsApp tab synchronously, in direct response to the tap/click —
-    // mobile Safari/Chrome block window.open() once an `await` has run first,
-    // which is why this worked on desktop but silently failed to navigate on mobile.
-    const waWindow = window.open('', '_blank');
-
-    const bookingData = {
-      name, phone,
-      roomType: room.id, roomName: room.name,
-      guests: parseInt(guests), extraGuests, nights,
-      checkin, checkout,
-      total,
-      status: 'upcoming',
-      manualStatus: null,
-      createdAt: Timestamp.fromDate(new Date())
-    };
-
-    try{
-      await addDoc(collection(db, "bookings"), bookingData);
-    }catch(err){
-      console.warn('Could not save to Firebase (check config):', err);
-    }
-
     const msg = `Hello Kurinji Resort, I'd like to book:%0A%0A`+
       `Name: ${name}%0APhone: ${phone}%0ARoom: ${room.name}%0AGuests: ${guests} (${extraGuests} extra)%0A`+
       `Check-in: ${checkin}%0ACheck-out: ${checkout}%0ANights: ${nights}%0ATotal: ₹${total.toLocaleString('en-IN')}`;
     const waUrl = `https://wa.me/919363004234?text=${msg}`;
-    if(waWindow){
-      waWindow.location.href = waUrl;
-    } else {
-      // Popup got blocked anyway (rare) — fall back to a same-tab navigation.
-      window.open(waUrl, '_blank');
-    }
 
+    // Open WhatsApp in ONE direct call, right at the top of the handler, with
+    // nothing async before it — this is the only way mobile browsers treat it
+    // as a genuine new tab tied to the tap. (Previously we opened a blank
+    // placeholder tab and set its location later; on mobile that placeholder
+    // often *was* the current tab, so the site itself navigated away to the
+    // wa.me redirect page and came back blank instead of showing this page.)
+    openWhatsApp(waUrl);
+
+    // Show the confirmation popup and reset the form immediately — the
+    // current tab never leaves this page, so this always renders regardless
+    // of what happens in the WhatsApp tab or with the network below.
     document.getElementById('confDetails').innerHTML = `
       <div class="conf-row"><span>Guest Name</span><span>${name}</span></div>
       <div class="conf-row"><span>Room</span><span>${room.name}</span></div>
@@ -970,6 +971,22 @@ function setupBookingForm(cfg){
     document.getElementById(cfg.form).reset();
     updatePricing();
     closeSidePanel();
+
+    // Save the booking to Firestore in the background — it's already
+    // confirmed to the guest, so this doesn't need to block anything above.
+    const bookingData = {
+      name, phone,
+      roomType: room.id, roomName: room.name,
+      guests: parseInt(guests), extraGuests, nights,
+      checkin, checkout,
+      total,
+      status: 'upcoming',
+      manualStatus: null,
+      createdAt: Timestamp.fromDate(new Date())
+    };
+    addDoc(collection(db, "bookings"), bookingData).catch(err=>{
+      console.warn('Could not save to Firebase (check config):', err);
+    });
   });
 
   return updatePricing;
@@ -1081,8 +1098,10 @@ if(jeepBtn){
     if(navigator.vibrate) navigator.vibrate([200,80,200,80,200]);
     jeepBtn.classList.add('ringing');
     setTimeout(()=> jeepBtn.classList.remove('ringing'), 900);
+    // Open WhatsApp right away, synchronously — a setTimeout delay here (even
+    // 350ms) breaks Safari's user-gesture window and silently blocks the popup.
     const msg = encodeURIComponent("Hello Kurinji Resort, I'd like to enquire about the Jeep Safari — availability, timings and pricing please.");
-    setTimeout(()=> window.open(`https://wa.me/919363004234?text=${msg}`, '_blank'), 350);
+    openWhatsApp(`https://wa.me/919363004234?text=${msg}`);
   });
 }
 </script>
