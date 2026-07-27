@@ -221,16 +221,11 @@ section{padding:100px 0;}
 .jeep-photo-strip::before,.jeep-photo-strip::after{content:'';position:absolute;top:0;bottom:10px;width:40px;z-index:2;pointer-events:none;}
 .jeep-photo-strip::before{left:0;background:linear-gradient(90deg,var(--cream-2),transparent);}
 .jeep-photo-strip::after{right:0;background:linear-gradient(270deg,var(--cream-2),transparent);}
-.jeep-photo-track{display:flex;gap:14px;width:max-content;animation:jeepMarquee 32s linear infinite;will-change:transform;pointer-events:none;}
+.jeep-photo-track{display:flex;gap:14px;width:max-content;pointer-events:none;}
 .jeep-photo-track .jps-item{flex:0 0 150px;width:150px;height:150px;border-radius:12px;overflow:hidden;background:var(--cream-2);box-shadow:0 6px 16px rgba(22,48,37,.08);}
 .jeep-photo-track .jps-item img{width:100%;height:100%;object-fit:cover;display:block;}
-@keyframes jeepMarquee{
-  from{transform:translateX(0);}
-  to{transform:translateX(-50%);}
-}
 @media(max-width:640px){
   .jeep-photo-track .jps-item{flex-basis:120px;width:120px;height:120px;}
-  .jeep-photo-track{animation-duration:22s;}
 }
 
 .sights-modal-box{max-width:760px;}
@@ -1040,7 +1035,7 @@ function renderRoomsInstant(){
     const itemsHTML = photoCount
       ? JEEP_SIGHT_PHOTOS.slice(0,10).map(url=>`<div class="jps-item"><img src="${url}" alt="Kanthalloor Jeep Safari sightseeing"></div>`).join('')
       : '';
-    // Duplicated so the marquee loop (translateX -50%) is seamless.
+    // Duplicated so the marquee loop (wraps at half the track width) is seamless.
     stripEl.innerHTML = itemsHTML + itemsHTML;
 
     // Safari can fail to size a width:max-content flex row correctly when
@@ -1051,8 +1046,36 @@ function renderRoomsInstant(){
       const gap = 14;
       const shown = Math.min(photoCount, 10) * 2; // items are duplicated for the loop
       stripEl.style.width = (shown * itemBasis + (shown - 1) * gap) + 'px';
+      startJeepMarquee(stripEl);
     }
   }
+}
+
+// Drives the "Glimpses from the trail" strip with requestAnimationFrame
+// instead of a CSS @keyframes animation. iOS Safari has been unreliable
+// about keeping long-running, wide, GPU-composited CSS animations alive —
+// the layer can get torn down or frozen a few seconds in. A JS-driven
+// transform sidesteps that entire class of bug and behaves identically
+// (and keeps running regardless of hover/click/tap) in every browser.
+function startJeepMarquee(track){
+  const pxPerSecond = window.matchMedia('(max-width:640px)').matches ? 46 : 34;
+  let lastTime = null;
+  let offset = 0;
+
+  function frame(time){
+    if(lastTime === null) lastTime = time;
+    const deltaSeconds = Math.min((time - lastTime) / 1000, 0.1); // clamp to avoid big jumps after tab was backgrounded
+    lastTime = time;
+    offset += pxPerSecond * deltaSeconds;
+
+    const halfWidth = track.scrollWidth / 2; // one full (non-duplicated) copy
+    if(halfWidth > 0 && offset >= halfWidth){
+      offset -= halfWidth;
+    }
+    track.style.transform = `translateX(${-offset}px)`;
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
 }
 
 // Season-based pricing: given a room's base rate + season list and a
