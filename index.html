@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kurinji Resort — Kanthalloor, Kerala | Book Your Misty Hill Stay</title>
-<meta name="description" content="Kurinji Resort in Kanthalloor, Kerala — Standard, Deluxe & Premium Villa stays amid the misty Western Ghats. Book directly on WhatsApp.">
+<meta name="description" content="Kurinji Resort in Kanthalloor, Kerala — Standard, Deluxe, Premium Villa & Quad Room stays amid the misty Western Ghats. Book directly on WhatsApp.">
 <link rel="icon" href="https://res.cloudinary.com/lfgnusmd/image/upload/v1784813172/Screenshot_2026-07-23_185558_pe82xx.png">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -72,11 +72,11 @@ section{padding:100px 0;}
 .nav-logo{display:flex;align-items:center;gap:12px;}
 .nav-logo img{height:44px;width:44px;border-radius:50%;object-fit:cover;}
 .nav-logo span{font-family:'Fraunces',serif;font-size:1.25rem;font-weight:700;color:var(--forest-deep);}
-.nav-links{display:flex;align-items:center;gap:32px;}
-.nav-links a{font-weight:500;font-size:.92rem;color:var(--forest-deep);position:relative;}
+.nav-links{display:flex;align-items:center;gap:20px;flex-wrap:nowrap;}
+.nav-links a{font-weight:500;font-size:.87rem;color:var(--forest-deep);position:relative;white-space:nowrap;}
 .nav-links a::after{content:'';position:absolute;bottom:-6px;left:0;width:0;height:2px;background:var(--terracotta);transition:.3s;}
 .nav-links a:hover::after{width:100%;}
-.nav-cta{background:var(--terracotta);color:#fff;padding:11px 24px;border-radius:100px;font-weight:600;font-size:.88rem;}
+.nav-cta{background:var(--terracotta);color:#fff;padding:10px 20px;border-radius:100px;font-weight:600;font-size:.85rem;white-space:nowrap;}
 .nav-admin-link{width:38px;height:38px;border-radius:50%;background:rgba(22,48,37,.06);display:flex;align-items:center;justify-content:center;color:var(--forest-deep);font-size:.85rem;opacity:.6;transition:.25s;}
 .nav-admin-link:hover{opacity:1;background:var(--forest-deep);color:#fff;}
 .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;z-index:1100;}
@@ -129,18 +129,21 @@ section{padding:100px 0;}
 .hero-book-card .form-group{margin-bottom:0;}
 .hero-book-card .sbp-form{display:flex;flex-direction:column;gap:14px;}
 @media(max-width:960px){
-  .hero-grid{grid-template-columns:1fr;}
+  .hero-grid{grid-template-columns:minmax(0,1fr);}
   .hero-book-card{max-width:480px;}
 }
 
 /* ===== ABOUT ===== */
 .about{background:var(--cream);}
 .about-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:64px;align-items:center;}
-.about-visual{position:relative;border-radius:var(--radius);overflow:hidden;aspect-ratio:4/5;background:linear-gradient(160deg,var(--forest) 0%,var(--forest-deep) 100%);display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow);}
+.about-visual{position:relative;border-radius:var(--radius);overflow:hidden;aspect-ratio:4/5;background:linear-gradient(160deg,var(--forest) 0%,var(--forest-deep) 100%);box-shadow:var(--shadow);}
 .about-visual i{font-size:4rem;color:rgba(255,255,255,.25);}
-.about-visual .badge{position:absolute;bottom:24px;left:24px;background:#fff;padding:16px 22px;border-radius:14px;box-shadow:var(--shadow);}
-.about-visual .badge strong{display:block;font-family:'Fraunces',serif;color:var(--terracotta);font-size:1.3rem;}
-.about-visual .badge span{font-size:.78rem;color:#77776b;}
+.about-slide{position:absolute;inset:0;opacity:0;transition:opacity 1.2s ease;}
+.about-slide.active{opacity:1;}
+.about-slide .slide-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:blur(35px) saturate(1.1);transform:scale(1.2);}
+.about-slide .slide-glass{position:absolute;inset:0;background:rgba(255,255,255,.12);backdrop-filter:blur(2px);}
+.about-slide .slide-fg{position:relative;width:100%;height:100%;object-fit:contain;z-index:1;}
+
 .about-text p{color:#4d4d43;margin-bottom:16px;}
 
 /* ===== ROOMS ===== */
@@ -189,17 +192,52 @@ section{padding:100px 0;}
 .amen-card:nth-child(7) i{color:#7a4fc9;}
 .amen-card:nth-child(8) i{color:#d1893f;}
 .amen-card:nth-child(9) i{color:#d6538c;}
+.amen-card:nth-child(10) i{color:#3f9142;}
 .amen-card h4{font-size:.95rem;font-family:'Work Sans',sans-serif;font-weight:600;color:var(--forest-deep);}
+
+/* ===== TERMS & CONDITIONS ===== */
+.terms{background:#fff;}
+.terms-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;}
+.terms-card{background:var(--cream);border-radius:12px;padding:16px 14px;text-align:center;border:1.5px solid #e2ddc9;}
+.terms-card i{font-size:1.2rem;color:var(--terracotta);margin-bottom:8px;display:block;}
+.terms-card h4{font-size:.85rem;margin-bottom:4px;}
+.terms-card p{font-size:.74rem;color:#6d6d61;line-height:1.4;}
+.terms-note{text-align:center;color:#8c8c7f;font-size:.82rem;margin-top:20px;}
 
 /* ===== JEEP SAFARI ===== */
 .jeep-safari{background:linear-gradient(160deg,var(--cream) 0%,var(--cream-2) 100%);}
 .jeep-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:56px;align-items:center;}
 .jeep-visual{position:relative;border-radius:var(--radius);overflow:hidden;aspect-ratio:4/3;background:linear-gradient(160deg,var(--terracotta) 0%,var(--terracotta-dark) 100%);display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow);}
+.jeep-visual img{width:100%;height:100%;object-fit:cover;}
 .jeep-visual i{font-size:4.5rem;color:rgba(255,255,255,.3);}
 .jeep-badge{position:absolute;top:20px;left:20px;background:#fff;color:var(--terracotta-dark);font-weight:700;font-size:.78rem;padding:8px 16px;border-radius:100px;}
 .jeep-points{list-style:none;margin:22px 0 28px;display:flex;flex-direction:column;gap:10px;}
 .jeep-points li{display:flex;align-items:center;gap:10px;color:#4d4d43;font-size:.92rem;}
 .jeep-points li i{color:var(--terracotta);font-size:.85rem;}
+.jeep-btn-row{display:flex;gap:14px;flex-wrap:wrap;}
+
+.jeep-strip-label{font-size:.82rem;font-weight:600;letter-spacing:.03em;text-transform:uppercase;color:var(--terracotta-dark);margin:38px 0 14px;}
+.jeep-photo-strip{overflow:hidden;position:relative;padding-bottom:10px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent);mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent);}
+.jeep-photo-track{display:flex;gap:14px;width:max-content;animation:jeepMarquee 32s linear infinite;}
+.jeep-photo-strip:hover .jeep-photo-track{animation-play-state:paused;}
+.jeep-photo-track .jps-item{flex:0 0 150px;aspect-ratio:1/1;border-radius:12px;overflow:hidden;background:var(--cream-2);box-shadow:0 6px 16px rgba(22,48,37,.08);}
+.jeep-photo-track .jps-item img{width:100%;height:100%;object-fit:cover;}
+@keyframes jeepMarquee{
+  from{transform:translateX(0);}
+  to{transform:translateX(-50%);}
+}
+@media(max-width:640px){
+  .jeep-photo-track .jps-item{flex-basis:120px;}
+  .jeep-photo-track{animation-duration:22s;}
+}
+
+.sights-modal-box{max-width:760px;}
+.locations-list{display:flex;flex-direction:column;gap:16px;max-height:60vh;overflow-y:auto;padding-right:6px;}
+.loc-list-item{display:flex;gap:14px;align-items:flex-start;padding-bottom:16px;border-bottom:1px solid #f0ebda;}
+.loc-list-item:last-child{border-bottom:none;padding-bottom:0;}
+.loc-num{flex-shrink:0;width:30px;height:30px;border-radius:50%;background:var(--cream-2);color:var(--terracotta-dark);font-family:'Fraunces',serif;font-weight:700;font-size:.85rem;display:flex;align-items:center;justify-content:center;}
+.loc-list-item h4{font-size:.98rem;margin-bottom:4px;color:var(--forest-deep);}
+.loc-list-item p{font-size:.85rem;color:#6d6d61;line-height:1.5;}
 .jeep-enquire{position:relative;}
 .jeep-enquire.ringing{animation:jeepShake .5s ease-in-out infinite;}
 @keyframes jeepShake{
@@ -214,23 +252,24 @@ section{padding:100px 0;}
 .gallery-section{background:var(--forest-deep);}
 .gallery-section .section-head h2{color:#fff;}
 .gallery-section .section-head p{color:rgba(255,255,255,.65);}
-.common-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:180px;gap:14px;}
+.common-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:150px;grid-auto-flow:dense;gap:14px;}
 .common-grid .cg-item{border-radius:12px;overflow:hidden;position:relative;background:linear-gradient(160deg,var(--forest) 0%,#6d1a5c 100%);}
 .common-grid .cg-item:nth-child(1){grid-column:span 2;grid-row:span 2;}
+.common-grid .cg-item:nth-child(4){grid-row:span 2;}
+.common-grid .cg-item:nth-child(6){grid-column:span 2;}
+.common-grid .cg-item:nth-child(9){grid-row:span 2;}
+.common-grid .cg-item:nth-child(12){grid-column:span 2;}
 .common-grid .cg-item img{width:100%;height:100%;object-fit:cover;}
 .common-grid .cg-item .ph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:rgba(255,255,255,.35);}
 .common-grid .cg-item .ph i{font-size:1.4rem;}
 .common-grid .cg-item .ph span{font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;}
 
-/* ===== FOOD ===== */
-.food{background:var(--cream);}
-.food-top{display:flex;gap:18px;align-items:flex-start;background:#fff;border-radius:var(--radius);padding:26px;margin-bottom:40px;box-shadow:0 8px 24px rgba(22,48,37,.06);}
-.food-top i{font-size:1.8rem;color:var(--terracotta);margin-top:4px;}
-.food-top h4{margin-bottom:6px;}
-.food-top p{color:#6d6d61;font-size:.92rem;}
-.menu-cards{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;}
-.menu-card{border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);}
-.menu-card img{width:100%;}
+/* ===== REVIEWS ===== */
+.reviews{background:var(--cream);}
+.review-cta{max-width:560px;margin:0 auto;text-align:center;background:#fff;border-radius:var(--radius);padding:44px 32px;box-shadow:0 8px 24px rgba(22,48,37,.06);}
+.review-cta i{font-size:2rem;color:var(--gold);margin-bottom:14px;}
+.review-cta h4{margin-bottom:10px;}
+.review-cta p{color:#6d6d61;font-size:.92rem;margin-bottom:24px;}
 
 /* ===== BOOKING FORM STYLES (shared by hero + quick panel) ===== */
 .form-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;margin-bottom:16px;}
@@ -245,6 +284,8 @@ section{padding:100px 0;}
 .booking-guide{display:flex;gap:10px;align-items:flex-start;background:rgba(201,161,90,.14);border:1px solid rgba(201,161,90,.4);border-radius:12px;padding:12px 14px;font-size:.8rem;line-height:1.5;color:var(--forest-deep);}
 .booking-guide i{color:var(--gold);margin-top:2px;font-size:.9rem;}
 .booking-guide strong{color:var(--terracotta-dark);}
+.checkinout-note{display:flex;align-items:flex-start;gap:8px;font-size:.78rem;line-height:1.5;color:#6d6d61;}
+.checkinout-note i{color:var(--terracotta);font-size:.8rem;margin-top:3px;}
 .price-breakdown{background:var(--cream-2);border-radius:12px;padding:18px;margin:16px 0;font-size:.88rem;}
 .price-breakdown .row{display:flex;justify-content:space-between;padding:4px 0;color:#5a5a4f;}
 .price-breakdown .row.total{border-top:1px solid #ddd6bd;margin-top:8px;padding-top:10px;font-weight:700;color:var(--forest-deep);font-size:1.05rem;}
@@ -343,29 +384,33 @@ footer .socials a:hover{background:var(--terracotta);}
 
 /* ===== RESPONSIVE ===== */
 @media(max-width:960px){
-  .about-grid,.loc-grid,.jeep-grid{grid-template-columns:1fr;}
+  .about-grid,.loc-grid,.jeep-grid{grid-template-columns:minmax(0,1fr);}
   .room-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
-  .amen-grid{grid-template-columns:repeat(2,1fr);}
-  .common-grid{grid-template-columns:repeat(2,1fr);}
+  .amen-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .terms-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .common-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .common-grid .cg-item{grid-column:span 1;grid-row:span 1;}
   .common-grid .cg-item:nth-child(1){grid-column:span 2;grid-row:span 1;}
-  .menu-cards{grid-template-columns:1fr;}
-  .footer-grid{grid-template-columns:1fr;}
+  .footer-grid{grid-template-columns:minmax(0,1fr);}
   .jeep-visual{aspect-ratio:16/9;}
 }
 @media(max-width:520px){
   .mb-search{flex-direction:column;}
   .mb-search button{width:100%;justify-content:center;}
 }
-@media(max-width:768px){
+@media(max-width:1050px){
   .nav-links{position:fixed;top:0;right:-100%;width:78%;height:100vh;background:var(--cream);flex-direction:column;justify-content:center;gap:28px;transition:.4s;box-shadow:-10px 0 30px rgba(0,0,0,.1);}
   .nav-links.active{right:0;}
+  .nav-links a{white-space:normal;font-size:1rem;}
   .nav-cta{display:none;}
   .hamburger{display:flex;}
+}
+@media(max-width:768px){
   section{padding:70px 0;}
-  .form-row{grid-template-columns:1fr;}
+  .form-row{grid-template-columns:minmax(0,1fr);}
 }
 @media(max-width:640px){
-  .room-grid{grid-template-columns:1fr;}
+  .room-grid{grid-template-columns:minmax(0,1fr);}
 }
 @media(max-width:480px){
   .hero-content h1{font-size:2.3rem;}
@@ -384,12 +429,13 @@ footer .socials a:hover{background:var(--terracotta);}
     </a>
     <div class="nav-links" id="navLinks">
       <a href="#rooms">Rooms</a>
+      <a href="#gallery">Gallery</a>
       <a href="#amenities">Amenities</a>
       <a href="#jeepsafari">Jeep Safari</a>
-      <a href="#food">Food</a>
-      <a href="#gallery">Gallery</a>
       <a href="#mybookings">My Bookings</a>
+      <a href="#terms">Terms</a>
       <a href="#location">Location</a>
+      <a href="#reviews">Reviews</a>
       <a href="#home" class="nav-cta">Book Now</a>
       <a href="admin.html" class="nav-admin-link" title="Admin Portal"><i class="fas fa-user-lock"></i></a>
     </div>
@@ -417,11 +463,11 @@ footer .socials a:hover{background:var(--terracotta);}
       <div class="hero-cta">
         <a href="#heroBookCard" class="btn btn-primary shake-btn"><i class="fas fa-calendar-check"></i> Book Your Stay</a>
         <a href="#rooms" class="btn btn-primary"><i class="fas fa-bed"></i> View Rooms</a>
-        <a href="#food" class="btn btn-outline" style="border-color:rgba(255,255,255,.4);color:#fff;"><i class="fas fa-utensils"></i> View Food Menu</a>
+        <a href="#reviews" class="btn btn-outline" style="border-color:rgba(255,255,255,.4);color:#fff;"><i class="fas fa-star"></i> Read Reviews</a>
         <a href="#jeepsafari" class="btn btn-outline" style="border-color:rgba(255,255,255,.4);color:#fff;"><i class="fas fa-truck-monster"></i> Book Jeep Safari</a>
       </div>
       <div class="hero-stats">
-        <div><strong>3</strong><span>Room Categories</span></div>
+        <div><strong>5</strong><span>Room Categories</span></div>
         <div><strong>28</strong><span>Rooms &amp; Suites</span></div>
         <div><strong>4.8★</strong><span>Guest Rated</span></div>
       </div>
@@ -441,10 +487,12 @@ footer .socials a:hover{background:var(--terracotta);}
           <div class="form-group"><label>Check-in</label><input type="date" id="hCheckin" required></div>
           <div class="form-group"><label>Check-out</label><input type="date" id="hCheckout" required></div>
         </div>
+        <p class="checkinout-note"><i class="fas fa-clock"></i> Check-in: 2:00 PM &nbsp;·&nbsp; Check-out: 11:00 AM</p>
+        <p class="checkinout-note"><i class="fas fa-child"></i> Children under 6 stay free; ages 6–12 are charged at half the extra-person rate.</p>
         <div class="form-group"><label>Guests</label><input type="number" id="hGuests" min="1" max="20" value="2" required></div>
         <div class="booking-guide">
           <i class="fas fa-circle-info"></i>
-          <span>2 guests included per room. Extra guest ₹1,500/night. <strong>No limit on Premium Villa.</strong></span>
+          <span>Included guests and extra-person charges vary by room type — select a room to see exact pricing below.</span>
         </div>
         <div class="price-breakdown" id="hPriceBreakdown">
           <div class="row"><span>Select a room to see pricing</span><span></span></div>
@@ -458,15 +506,13 @@ footer .socials a:hover{background:var(--terracotta);}
 <!-- ABOUT -->
 <section class="about" id="about">
   <div class="container about-grid">
-    <div class="about-visual" data-aos="fade-right">
-      <i class="fas fa-mountain-sun"></i>
-      <div class="badge"><strong>Kanthalloor</strong><span>Cherapunji of Kerala</span></div>
+    <div class="about-visual" data-aos="fade-right" id="aboutVisual">
     </div>
     <div class="about-text" data-aos="fade-left">
       <span class="eyebrow">About Kurinji Resort</span>
       <h2 style="margin-bottom:18px;">Rooted in the hills, built for rest</h2>
       <p>Kurinji Resort sits near Pattysery Dam in G.N Puram, Kanthalloor — one of Kerala's coolest, mistiest hill villages. Named after the rare Neelakurinji flower that blankets these hills once every twelve years, the resort is built around the same idea: something worth waiting for.</p>
-      <p>From cosy Standard rooms to the sprawling two-storey Premium Villa, every stay includes a complimentary breakfast and easy access to the valley's cardamom estates, dam views and cool mountain trails.</p>
+      <p>From cosy Standard and Quad rooms to the spacious Premium Villas, every stay includes a complimentary breakfast and easy access to the valley's cardamom estates, dam views and cool mountain trails.</p>
       <div class="hero-cta" style="margin-top:10px;">
         <a href="#home" class="btn btn-primary"><i class="fas fa-calendar-check"></i> Check Availability</a>
       </div>
@@ -480,11 +526,23 @@ footer .socials a:hover{background:var(--terracotta);}
     <div class="section-head center">
       <span class="eyebrow">Stay With Us</span>
       <h2>Rooms &amp; Villas</h2>
-      <p>Rates shown are per room, per night, inclusive of 2 guests. Live availability updates automatically.</p>
+      <p>Rates shown are per room, per night. Included guests vary by room type. Live availability updates automatically.</p>
     </div>
     <div class="room-grid" id="roomGrid">
       <!-- room cards injected by JS -->
     </div>
+  </div>
+</section>
+
+<!-- COMMON AREA GALLERY -->
+<section class="gallery-section" id="gallery">
+  <div class="container">
+    <div class="section-head center">
+      <span class="eyebrow">Around The Resort</span>
+      <h2 style="color:#fff;">Common Areas</h2>
+      <p>Lobby, garden, dining and dam-view sit-outs around Kurinji Resort.</p>
+    </div>
+    <div class="common-grid" id="commonGrid"></div>
   </div>
 </section>
 
@@ -505,6 +563,7 @@ footer .socials a:hover{background:var(--terracotta);}
       <div class="amen-card"><i class="fas fa-droplet"></i><h4>Hot Water 24/7</h4></div>
       <div class="amen-card"><i class="fas fa-tree"></i><h4>Nature Walks</h4></div>
       <div class="amen-card"><i class="fas fa-car-side"></i><h4>Dam &amp; Valley Views</h4></div>
+      <div class="amen-card"><i class="fas fa-child-reaching"></i><h4>Play Park</h4></div>
     </div>
     <p style="text-align:center;color:#8c8c7f;font-size:.82rem;margin-top:24px;">Have a specific amenity list to add? Send it over and this section updates in one edit.</p>
   </div>
@@ -514,7 +573,7 @@ footer .socials a:hover{background:var(--terracotta);}
 <section class="jeep-safari" id="jeepsafari">
   <div class="container jeep-grid">
     <div class="jeep-visual" data-aos="fade-right">
-      <i class="fas fa-truck-monster"></i>
+      <img src="https://res.cloudinary.com/lfgnusmd/image/upload/v1785151589/kanthalloor-jeep-safari-offroad_k7qs4f.jpg" alt="Kanthalloor Jeep Safari" loading="lazy">
       <div class="jeep-badge">Popular Add-on</div>
     </div>
     <div class="jeep-text" data-aos="fade-left">
@@ -527,47 +586,68 @@ footer .socials a:hover{background:var(--terracotta);}
         <li><i class="fas fa-check"></i> Morning &amp; evening batches</li>
         <li><i class="fas fa-check"></i> Pricing on request — group discounts available</li>
       </ul>
-      <button class="btn btn-primary jeep-enquire" id="jeepEnquireBtn"><i class="fab fa-whatsapp"></i> WhatsApp Enquiry</button>
+      <div class="jeep-btn-row">
+        <button class="btn btn-primary jeep-enquire" id="jeepEnquireBtn"><i class="fab fa-whatsapp"></i> WhatsApp Enquiry</button>
+        <button class="btn btn-outline" id="jeepLocationsBtn" type="button"><i class="fas fa-map-location-dot"></i> Sightseeing Locations</button>
+      </div>
     </div>
+  </div>
+  <div class="container">
+    <p class="jeep-strip-label">Glimpses from the trail</p>
+    <div class="jeep-photo-strip"><div class="jeep-photo-track" id="jeepPhotoStrip"></div></div>
   </div>
 </section>
 
-<!-- COMMON AREA GALLERY -->
-<section class="gallery-section" id="gallery">
-  <div class="container">
-    <div class="section-head center">
-      <span class="eyebrow">Around The Resort</span>
-      <h2 style="color:#fff;">Common Areas</h2>
-      <p>Lobby, garden, dining and dam-view sit-outs — photos coming soon.</p>
+<!-- JEEP SAFARI SIGHTSEEING LOCATIONS MODAL -->
+<div class="modal-overlay" id="locationsModal">
+  <div class="modal-box sights-modal-box">
+    <div class="modal-close" onclick="document.getElementById('locationsModal').classList.remove('active')"><i class="fas fa-xmark"></i></div>
+    <h3 style="text-align:left;">Kanthalloor Sightseeing Locations</h3>
+    <p class="sub" style="text-align:left;margin-bottom:22px;">Best places to visit in and around Kanthalloor — many covered on our jeep safari routes.</p>
+    <div class="locations-list">
+      <div class="loc-list-item">
+        <span class="loc-num">1</span>
+        <div><h4>Kanthalloor</h4><p>A scenic hill village known as the "Apple Valley of Kerala" with beautiful fruit orchards, vegetable farms, and cool weather.</p></div>
+      </div>
+      <div class="loc-list-item">
+        <span class="loc-num">2</span>
+        <div><h4>Irachil Para Water Falls</h4><p>One of the most popular waterfalls near Kanthalloor, surrounded by rocky hills and greenery.</p></div>
+      </div>
+      <div class="loc-list-item">
+        <span class="loc-num">3</span>
+        <div><h4>Kanthalloor Waterfalls</h4><p>A picturesque waterfall ideal for photography and relaxing in nature.</p></div>
+      </div>
+      <div class="loc-list-item">
+        <span class="loc-num">4</span>
+        <div><h4>Muniyara – Anakottapara Park</h4><p>An ancient megalithic site with historic stone burial chambers and panoramic hill views.</p></div>
+      </div>
+      <div class="loc-list-item">
+        <span class="loc-num">5</span>
+        <div><h4>Bhramaram View Point</h4><p>A famous viewpoint offering breathtaking sunrise, sunset, and valley views.</p></div>
+      </div>
+      <div class="loc-list-item">
+        <span class="loc-num">6</span>
+        <div><h4>Marayoor Sandalwood Forest</h4><p>India's only natural sandalwood forest, located about 15 km from Kanthalloor.</p></div>
+      </div>
+      <div class="loc-list-item">
+        <span class="loc-num">7</span>
+        <div><h4>Chinnar Wildlife Sanctuary</h4><p>A wildlife sanctuary known for elephants, spotted deer, giant squirrels, and trekking trails.</p></div>
+      </div>
+      <div class="loc-list-item">
+        <span class="loc-num">8</span>
+        <div><h4>Keezhantoor Waterfalls</h4><p>A peaceful waterfall hidden amidst forests.</p></div>
+      </div>
+      <div class="loc-list-item">
+        <span class="loc-num">9</span>
+        <div><h4>Apple &amp; Fruit Orchards</h4><p>Visit local farms growing apples, peaches, plums, strawberries, oranges, and passion fruit.</p></div>
+      </div>
+      <div class="loc-list-item">
+        <span class="loc-num">10</span>
+        <div><h4>Kanthalloor Tours N Jeep Safari</h4><p>Enjoy off-road jeep safaris through forests, viewpoints, and plantations.</p></div>
+      </div>
     </div>
-    <div class="common-grid" id="commonGrid"></div>
   </div>
-</section>
-
-<!-- FOOD -->
-<section class="food" id="food">
-  <div class="container">
-    <div class="section-head center">
-      <span class="eyebrow">Dining</span>
-      <h2>Food &amp; Breakfast</h2>
-    </div>
-    <div class="food-top">
-      <i class="fas fa-mug-saucer"></i>
-      <div>
-        <h4>Complimentary Breakfast</h4>
-        <p>Every stay at Kurinji Resort includes a complimentary breakfast for all guests. All other meals are available à la carte from our menu below — order anytime during your stay.</p>
-      </div>
-    </div>
-    <div class="menu-cards" data-aos="fade-up">
-      <div class="menu-card">
-        <img src="https://res.cloudinary.com/lfgnusmd/image/upload/v1784813058/WhatsApp_Image_2026-07-21_at_2.17.05_PM_pfulhe.jpg" alt="Kurinji Resort Food Menu — Front" loading="lazy">
-      </div>
-      <div class="menu-card">
-        <img src="https://res.cloudinary.com/lfgnusmd/image/upload/v1784813058/WhatsApp_Image_2026-07-21_at_2.17.05_PM_1_cmajmk.jpg" alt="Kurinji Resort Food Menu — Back" loading="lazy">
-      </div>
-    </div>
-  </div>
-</section>
+</div>
 
 <!-- MY BOOKINGS -->
 <section class="mybookings" id="mybookings">
@@ -592,6 +672,60 @@ footer .socials a:hover{background:var(--terracotta);}
   </div>
 </section>
 
+<!-- TERMS & CONDITIONS -->
+<section class="terms" id="terms">
+  <div class="container">
+    <div class="section-head center">
+      <span class="eyebrow">Please Note</span>
+      <h2>House Rules &amp; Terms</h2>
+      <p>A few things to know before you book your stay at Kurinji Resort.</p>
+    </div>
+    <div class="terms-grid">
+      <div class="terms-card" data-aos="fade-up">
+        <i class="fas fa-paw"></i>
+        <h4>Pets Not Allowed</h4>
+        <p>We're unable to accommodate pets of any kind on the property.</p>
+      </div>
+      <div class="terms-card" data-aos="fade-up">
+        <i class="fas fa-id-card"></i>
+        <h4>18+ Adults Only</h4>
+        <p>Bookings and stays are restricted to guests aged 18 years and above.</p>
+      </div>
+      <div class="terms-card" data-aos="fade-up">
+        <i class="fas fa-wine-glass"></i>
+        <h4>Alcohol Allowed</h4>
+        <p>Guests may consume alcohol responsibly within their room/villa.</p>
+      </div>
+      <div class="terms-card" data-aos="fade-up">
+        <i class="fas fa-address-card"></i>
+        <h4>ID Proof Required</h4>
+        <p>Valid government photo ID is mandatory for all guests at check-in.</p>
+      </div>
+      <div class="terms-card" data-aos="fade-up">
+        <i class="fas fa-volume-low"></i>
+        <h4>Quiet Hours</h4>
+        <p>Please keep noise low after 10 PM out of respect for other guests.</p>
+      </div>
+      <div class="terms-card" data-aos="fade-up">
+        <i class="fas fa-house-chimney-crack"></i>
+        <h4>Property Care</h4>
+        <p>Guests are responsible for any damage caused during their stay.</p>
+      </div>
+      <div class="terms-card" data-aos="fade-up">
+        <i class="fas fa-smoking"></i>
+        <h4>Smoking Policy</h4>
+        <p>Smoking is permitted only in designated outdoor areas.</p>
+      </div>
+      <div class="terms-card" data-aos="fade-up">
+        <i class="fas fa-bed"></i>
+        <h4>Extra Mattress</h4>
+        <p>Available on request, subject to availability and extra charges.</p>
+      </div>
+    </div>
+    <p class="terms-note">Have a cancellation or refund policy to add? Send it over and this section updates in one edit.</p>
+  </div>
+</section>
+
 <!-- LOCATION -->
 <section class="location" id="location">
   <div class="container loc-grid">
@@ -605,6 +739,23 @@ footer .socials a:hover{background:var(--terracotta);}
     </div>
     <div class="map-frame" data-aos="fade-left">
       <iframe src="https://www.google.com/maps?q=Veabeas+Comforts+near+Pattysery+Dam+GN+Puram+Kanthalloor+Kerala+685620&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section class="reviews" id="reviews">
+  <div class="container">
+    <div class="section-head center">
+      <span class="eyebrow">Guest Reviews</span>
+      <h2>Loved by our guests</h2>
+      <p>Kurinji Resort is rated 4.8★ by guests who've stayed with us — read their reviews or share your own.</p>
+    </div>
+    <div class="review-cta" data-aos="fade-up">
+      <i class="fas fa-star"></i>
+      <h4>Enjoyed your stay with us?</h4>
+      <p>A quick review on Google helps other travellers discover Kurinji Resort and means a lot to our team. It only takes a minute.</p>
+      <a href="https://www.google.com/travel/search?q=kurinji%20resort%20kanthalloor&g2lb=4965990%2C72471280%2C72560029%2C72573224%2C72647020%2C72686036%2C72803964%2C72882230%2C73064764%2C73249147%2C121529350%2C121738283%2C121762713&hl=en-IN&gl=in&cs=1&ssta=1&ts=CAEaRwopEicyJTB4M2IwNzc5ZTc3YjViYTU2NzoweGNjMzU1YjVmNmExMzIwODASGhIUCgcI6g8QBxgbEgcI6g8QBxgcGAEyAhAA&qs=CAEyFENnc0lnTUhNMFBicjFwck1BUkFCOAJCCQmAIBNqX1s1zA&ap=ugEHcmV2aWV3cw&ictx=111&ved=0CAAQ5JsGahcKEwiYkKXikfKVAxUAAAAAHQAAAAAQAw" target="_blank" rel="noopener" class="btn btn-primary"><i class="fab fa-google"></i> Write a Google Review</a>
     </div>
   </div>
 </section>
@@ -630,9 +781,10 @@ footer .socials a:hover{background:var(--terracotta);}
         <h5>Explore</h5>
         <ul>
           <li><a href="#rooms">Rooms</a></li>
-          <li><a href="#food">Food Menu</a></li>
           <li><a href="#gallery">Gallery</a></li>
           <li><a href="#location">Location</a></li>
+          <li><a href="#terms">Terms &amp; Conditions</a></li>
+          <li><a href="#reviews">Reviews</a></li>
         </ul>
       </div>
       <div>
@@ -668,9 +820,11 @@ footer .socials a:hover{background:var(--terracotta);}
     <div class="form-group"><label>Guests</label><input type="number" id="qGuests" min="1" max="20" value="2" required></div>
     <div class="form-group"><label>Check-in</label><input type="date" id="qCheckin" required></div>
     <div class="form-group"><label>Check-out</label><input type="date" id="qCheckout" required></div>
+    <p class="checkinout-note"><i class="fas fa-clock"></i> Check-in: 2:00 PM &nbsp;·&nbsp; Check-out: 11:00 AM</p>
+    <p class="checkinout-note"><i class="fas fa-child"></i> Children under 6 stay free; ages 6–12 are charged at half the extra-person rate.</p>
     <div class="booking-guide">
       <i class="fas fa-circle-info"></i>
-      <span>2 guests included per room. Extra guest ₹1,500/night. <strong>No limit on Premium Villa.</strong></span>
+      <span>Included guests and extra-person charges vary by room type — select a room to see exact pricing below.</span>
     </div>
     <div class="price-breakdown" id="qPriceBreakdown">
       <div class="row"><span>Select a room to see pricing</span><span></span></div>
@@ -722,20 +876,111 @@ window.db = db;
 window.fx = { collection, addDoc, getDocs, doc, getDoc, setDoc, query, where, Timestamp };
 
 const ROOM_TYPES = [
-  { id:'standard', name:'Standard Room', desc:'Cosy, comfortable rooms perfect for couples and small families.', defaultRate:4000, defaultCount:4 },
-  { id:'deluxe', name:'Deluxe Room', desc:'Living room, sit-out and a private bedroom for a relaxed stay.', defaultRate:6000, defaultCount:4 },
-  { id:'premium', name:'Premium Villa', desc:'A full two-storey villa — 5 bedrooms, 2 halls and a private balcony.', defaultRate:20000, defaultCount:1 }
+  { id:'standard', name:'Standard Room', desc:'Cosy, comfortable rooms perfect for couples and small families.', defaultRate:4000, defaultCount:4, includedGuests:2, extraPersonRate:1500 },
+  { id:'deluxe', name:'Deluxe Room', desc:'Living room, sit-out and a private bedroom for a relaxed stay.', defaultRate:6000, defaultCount:4, includedGuests:2, extraPersonRate:1500 },
+  { id:'villa2bd', name:'Premium Villa (2 Bedroom, Ground Floor)', desc:'A ground-floor villa with 2 bedrooms — spacious and private.', defaultRate:10000, defaultCount:1, includedGuests:4, extraPersonRate:2000 },
+  { id:'villa3bd', name:'Premium Villa (3 Bedroom, 1st Floor)', desc:'A first-floor villa with 3 bedrooms, ideal for larger groups.', defaultRate:15000, defaultCount:1, includedGuests:6, extraPersonRate:2000 },
+  { id:'quad', name:'Quad Room (2 Bedroom)', desc:'A comfortable 2-bedroom quad room for small families or groups.', defaultRate:7000, defaultCount:2, includedGuests:4, extraPersonRate:1500 }
 ];
 
 // Paste Cloudinary photo URLs here later — 5 each. Leave empty for "coming soon" placeholder.
 const ROOM_PHOTOS = {
-  standard: [],
-  deluxe: [],
-  premium: []
+  standard: [
+    "https://res.cloudinary.com/lfgnusmd/image/upload/v1785148454/WhatsApp_Image_2026-07-25_at_6.23.49_PM_qyvz5m.jpg",
+    "https://res.cloudinary.com/lfgnusmd/image/upload/v1785148454/WhatsApp_Image_2026-07-25_at_6.24.26_PM_hqlfod.jpg",
+    "https://res.cloudinary.com/lfgnusmd/image/upload/v1785148453/WhatsApp_Image_2026-07-25_at_6.24.27_PM_mjtpwn.jpg",
+    "https://res.cloudinary.com/lfgnusmd/image/upload/v1785148453/WhatsApp_Image_2026-07-25_at_6.25.53_PM_jn6hy1.jpg"
+  ],
+  deluxe: [
+    "https://res.cloudinary.com/lfgnusmd/image/upload/v1785148437/WhatsApp_Image_2026-07-25_at_6.43.00_PM_hpf2qa.jpg",
+    "https://res.cloudinary.com/lfgnusmd/image/upload/v1785148415/WhatsApp_Image_2026-07-25_at_10.07.31_PM_rmhisj.jpg",
+    "https://res.cloudinary.com/lfgnusmd/image/upload/v1785148414/WhatsApp_Image_2026-07-25_at_10.06.39_PM_ut441y.jpg",
+    "https://res.cloudinary.com/lfgnusmd/image/upload/v1785148718/common_area_kjfqyn.webp"
+  ],
+  villa2bd: [
+    "https://res.cloudinary.com/lfgnusmd/image/upload/v1785148413/WhatsApp_Image_2026-07-25_at_6.40.28_PM_dujzhw.jpg",
+    "https://res.cloudinary.com/lfgnusmd/image/upload/v1785149937/unnamed_4_yuupsb.webp",
+    "https://res.cloudinary.com/lfgnusmd/image/upload/v1785149939/unnamed_1_hvuhgh.webp",
+    "https://res.cloudinary.com/lfgnusmd/image/upload/v1785149938/unnamed_2_atq0xc.webp"
+  ],
+  villa3bd: [
+    "https://res.cloudinary.com/lfgnusmd/image/upload/v1785149936/unnamed_5_wurb9r.webp",
+    "https://res.cloudinary.com/lfgnusmd/image/upload/v1785148413/WhatsApp_Image_2026-07-25_at_6.40.27_PM_1_rtckmv.jpg",
+    "https://res.cloudinary.com/lfgnusmd/image/upload/v1785148412/WhatsApp_Image_2026-07-25_at_6.25.42_PM_vsbzkm.jpg",
+    "https://res.cloudinary.com/lfgnusmd/image/upload/v1785148412/WhatsApp_Image_2026-07-25_at_6.40.27_PM_2_ledcd0.jpg"
+  ],
+  quad: [
+    "https://res.cloudinary.com/lfgnusmd/image/upload/v1785148414/WhatsApp_Image_2026-07-25_at_6.36.24_PM_1_ghwgi9.jpg",
+    "https://res.cloudinary.com/lfgnusmd/image/upload/v1785148414/WhatsApp_Image_2026-07-25_at_10.07.31_PM_1_tgrzgl.jpg",
+    "https://res.cloudinary.com/lfgnusmd/image/upload/v1785148453/WhatsApp_Image_2026-07-25_at_6.25.53_PM_jn6hy1.jpg",
+    "https://res.cloudinary.com/lfgnusmd/image/upload/v1785148718/unnamed_ehbola.webp"
+  ]
 };
 
-// Common area photo URLs — paste later.
-const COMMON_PHOTOS = [];
+// Common area photo URLs.
+const COMMON_PHOTOS = [
+  "https://res.cloudinary.com/lfgnusmd/image/upload/v1785148437/WhatsApp_Image_2026-07-25_at_6.43.00_PM_hpf2qa.jpg",
+  "https://res.cloudinary.com/lfgnusmd/image/upload/v1785148414/WhatsApp_Image_2026-07-25_at_6.36.24_PM_1_ghwgi9.jpg",
+  "https://res.cloudinary.com/lfgnusmd/image/upload/v1785148413/WhatsApp_Image_2026-07-25_at_6.40.28_PM_dujzhw.jpg",
+  "https://res.cloudinary.com/lfgnusmd/image/upload/v1785148413/WhatsApp_Image_2026-07-25_at_6.32.23_PM_1_ywiyfb.jpg",
+  "https://res.cloudinary.com/lfgnusmd/image/upload/v1785148718/common_area_kjfqyn.webp",
+  "https://res.cloudinary.com/lfgnusmd/image/upload/v1785148718/unnamed_ehbola.webp",
+  "https://res.cloudinary.com/lfgnusmd/image/upload/v1785148412/WhatsApp_Image_2026-07-25_at_7.43.06_PM_sraosx.jpg",
+  "https://res.cloudinary.com/lfgnusmd/image/upload/v1785148413/WhatsApp_Image_2026-07-25_at_6.40.27_PM_1_rtckmv.jpg",
+  "https://res.cloudinary.com/lfgnusmd/image/upload/v1785148413/WhatsApp_Image_2026-07-25_at_6.32.41_PM_bjy8sd.jpg",
+  "https://res.cloudinary.com/lfgnusmd/image/upload/v1785148413/WhatsApp_Image_2026-07-25_at_6.33.33_PM_dxfy6n.jpg",
+  "https://res.cloudinary.com/lfgnusmd/image/upload/v1785148416/WhatsApp_Image_2026-07-25_at_6.36.24_PM_qd9psj.jpg",
+  "https://res.cloudinary.com/lfgnusmd/image/upload/v1785148436/WhatsApp_Image_2026-07-25_at_10.07.31_PM_td7hqy.jpg",
+  "https://res.cloudinary.com/lfgnusmd/image/upload/v1785148412/WhatsApp_Image_2026-07-25_at_6.41.11_PM_cryjgh.jpg"
+];
+
+// Jeep Safari sightseeing photos (Kanthalloor viewpoints/trails) — paste up
+// to 10 Cloudinary URLs here later, in the order you want them shown.
+const JEEP_SIGHT_PHOTOS = [
+  "https://res.cloudinary.com/lfgnusmd/image/upload/v1785153706/images_1_xvhqqj.jpg",
+  "https://res.cloudinary.com/lfgnusmd/image/upload/v1785153705/images2_mx4ziv.jpg",
+  "https://res.cloudinary.com/lfgnusmd/image/upload/v1785153705/images_xuhnmr.jpg",
+  "https://res.cloudinary.com/lfgnusmd/image/upload/v1785153704/images_3_wfkyez.jpg",
+  "https://res.cloudinary.com/lfgnusmd/image/upload/v1785153703/images_1_shf7hh.jpg",
+  "https://res.cloudinary.com/lfgnusmd/image/upload/v1785153702/images_2_f2mzvu.jpg",
+  "https://res.cloudinary.com/lfgnusmd/image/upload/v1785153701/images_3_vbhu7n.jpg",
+  "https://res.cloudinary.com/lfgnusmd/image/upload/v1785153700/images_5_kapg1e.jpg",
+  "https://res.cloudinary.com/lfgnusmd/image/upload/v1785153700/images_6_cqeiaq.jpg",
+  "https://res.cloudinary.com/lfgnusmd/image/upload/v1785153701/images_4_z321fg.jpg"
+];
+
+// About section — auto-sliding photos (crossfade, loops every 3s).
+const ABOUT_PHOTOS = [
+  "https://res.cloudinary.com/lfgnusmd/image/upload/v1785151998/Screenshot_2026-07-27_170148_vsdjpe.png",
+  "https://res.cloudinary.com/lfgnusmd/image/upload/v1785148718/common_area_kjfqyn.webp",
+  "https://res.cloudinary.com/lfgnusmd/image/upload/v1785151999/Screenshot_2026-07-27_170059_xyvdgh.png",
+  "https://res.cloudinary.com/lfgnusmd/image/upload/v1785152001/Screenshot_2026-07-27_164515_uyibzz.png",
+  "https://res.cloudinary.com/lfgnusmd/image/upload/v1785151955/unnamed_13_pa6rya.webp",
+  "https://res.cloudinary.com/lfgnusmd/image/upload/v1785151956/unnamed_12_s7oloh.webp",
+  "https://res.cloudinary.com/lfgnusmd/image/upload/v1785151957/unnamed_9_ceq5wc.webp"
+];
+
+function renderAboutSlideshow(){
+  const wrap = document.getElementById('aboutVisual');
+  if(!wrap || !ABOUT_PHOTOS.length) return;
+  const slidesHTML = ABOUT_PHOTOS.map((url,i) => `
+    <div class="about-slide ${i===0?'active':''}">
+      <img class="slide-bg" src="${url}" loading="lazy" aria-hidden="true" alt="">
+      <div class="slide-glass"></div>
+      <img class="slide-fg" src="${url}" loading="lazy" alt="Kurinji Resort - Kanthalloor">
+    </div>
+  `).join('');
+  wrap.insertAdjacentHTML('afterbegin', slidesHTML);
+  const slides = wrap.querySelectorAll('.about-slide');
+
+  let idx = 0;
+  setInterval(()=>{
+    slides[idx].classList.remove('active');
+    idx = (idx + 1) % slides.length;
+    slides[idx].classList.add('active');
+  }, 3000);
+}
+renderAboutSlideshow();
 
 let roomsData = {};
 
@@ -747,7 +992,7 @@ function renderRoomsInstant(){
   document.querySelectorAll('.room-type-select').forEach(sel => sel.innerHTML = '<option value="" disabled selected>Select room</option>');
 
   for(const rt of ROOM_TYPES){
-    roomsData[rt.id] = { ...rt, rate: rt.defaultRate, count: rt.defaultCount };
+    roomsData[rt.id] = { ...rt, rate: rt.defaultRate, count: rt.defaultCount, seasons: [] };
 
     const photos = ROOM_PHOTOS[rt.id] || [];
     const hasPhotos = photos.length > 0;
@@ -771,8 +1016,8 @@ function renderRoomsInstant(){
         <div class="room-body">
           <h3>${rt.name}</h3>
           <p class="desc">${rt.desc}</p>
-          <div class="room-price"><strong id="price-${rt.id}">₹${rt.defaultRate.toLocaleString('en-IN')}</strong><span>/ night, incl. 2 guests</span></div>
-          <p class="room-note">+₹1,500 per extra guest, per night</p>
+          <div class="room-price"><strong id="price-${rt.id}">₹${rt.defaultRate.toLocaleString('en-IN')}</strong><span>/ night, incl. ${rt.includedGuests} guests</span></div>
+          <p class="room-note" id="note-${rt.id}">+₹${rt.extraPersonRate.toLocaleString('en-IN')} per extra guest, per night</p>
           <a href="#home" class="btn btn-primary" onclick="preselectRoom('${rt.id}')">Book This Room</a>
         </div>
       </div>
@@ -784,28 +1029,55 @@ function renderRoomsInstant(){
   }
 
   document.getElementById('commonGrid').innerHTML = (COMMON_PHOTOS.length
-    ? COMMON_PHOTOS.slice(0,8).map(url=>`<div class="cg-item"><img src="${url}" loading="lazy"></div>`).join('')
-    : Array(4).fill(0).map(()=>`<div class="cg-item"><div class="ph"><i class="fas fa-image"></i><span>Coming soon</span></div></div>`).join(''));
+    ? COMMON_PHOTOS.slice(0,13).map(url=>`<div class="cg-item"><img src="${url}" alt="Kurinji Resort common area" loading="lazy"></div>`).join('')
+    : Array(10).fill(0).map(()=>`<div class="cg-item"><div class="ph"><i class="fas fa-image"></i><span>Coming soon</span></div></div>`).join(''));
+
+  const stripEl = document.getElementById('jeepPhotoStrip');
+  if(stripEl){
+    const itemsHTML = JEEP_SIGHT_PHOTOS.length
+      ? JEEP_SIGHT_PHOTOS.slice(0,10).map(url=>`<div class="jps-item"><img src="${url}" loading="lazy" alt="Kanthalloor Jeep Safari sightseeing"></div>`).join('')
+      : '';
+    // Duplicated so the marquee loop (translateX -50%) is seamless.
+    stripEl.innerHTML = itemsHTML + itemsHTML;
+  }
 }
 
-// Fetches live rate/count from Firestore in the BACKGROUND (in parallel) and
-// patches the already-visible cards in place — never blocks the initial render.
+// Season-based pricing: given a room's base rate + season list and a
+// YYYY-MM-DD date string, returns the season rate if the date falls inside
+// a configured season range, otherwise falls back to the base rate.
+// ISO date strings compare correctly with plain string comparison.
+function getEffectiveRate(room, dateStr){
+  const seasons = (room && room.seasons) || [];
+  if(!seasons.length || !dateStr) return room ? room.rate : 0;
+  const match = seasons.find(s => s.start && s.end && dateStr >= s.start && dateStr <= s.end);
+  return match ? Number(match.rate) : room.rate;
+}
+
+// Fetches live rate/count/seasons from Firestore in the BACKGROUND (in parallel)
+// and patches the already-visible cards in place — never blocks the initial render.
 async function syncRoomsFromFirebase(){
   await Promise.all(ROOM_TYPES.map(async (rt) => {
     try{
       const ref = doc(db, "rooms", rt.id);
       let snap = await getDoc(ref);
       if(!snap.exists()){
-        await setDoc(ref, { name: rt.name, rate: rt.defaultRate, count: rt.defaultCount });
+        await setDoc(ref, { name: rt.name, rate: rt.defaultRate, count: rt.defaultCount, seasons: [] });
         snap = await getDoc(ref);
       }
       if(snap.exists()){
-        const { rate, count } = snap.data();
-        roomsData[rt.id] = { ...roomsData[rt.id], rate, count };
+        const { rate, count, seasons } = snap.data();
+        roomsData[rt.id] = { ...roomsData[rt.id], rate, count, seasons: seasons || [] };
+
+        const todayISO = new Date().toISOString().split('T')[0];
+        const effectiveRate = getEffectiveRate(roomsData[rt.id], todayISO);
+        const onSeason = effectiveRate !== rate;
+
         const priceEl = document.getElementById(`price-${rt.id}`);
         const badgeEl = document.getElementById(`badge-${rt.id}`);
-        if(priceEl) priceEl.textContent = `₹${rate.toLocaleString('en-IN')}`;
+        const noteEl = document.getElementById(`note-${rt.id}`);
+        if(priceEl) priceEl.textContent = `₹${effectiveRate.toLocaleString('en-IN')}`;
         if(badgeEl) badgeEl.textContent = `${count} Available`;
+        if(noteEl) noteEl.textContent = `+₹${rt.extraPersonRate.toLocaleString('en-IN')} per extra guest, per night${onSeason ? ' · Season pricing applied' : ''}`;
         document.querySelectorAll(`option[id^="opt-"][id$="-${rt.id}"]`).forEach(opt=>{
           opt.textContent = `${rt.name} — ₹${rate.toLocaleString('en-IN')}/night`;
         });
@@ -888,17 +1160,21 @@ function setupBookingForm(cfg){
       const diff = Math.round((d2-d1)/(1000*60*60*24));
       nights = diff > 0 ? diff : 1;
     }
-    const extraGuests = Math.max(0, guests - 2);
-    const extraCharge = extraGuests * 1500 * nights;
-    const roomCharge = room.rate * nights;
+    const effectiveDate = checkin || new Date().toISOString().split('T')[0];
+    const effectiveRate = getEffectiveRate(room, effectiveDate);
+    const includedGuests = room.includedGuests ?? 2;
+    const extraPersonRate = room.extraPersonRate ?? 1500;
+    const extraGuests = Math.max(0, guests - includedGuests);
+    const extraCharge = extraGuests * extraPersonRate * nights;
+    const roomCharge = effectiveRate * nights;
     const total = roomCharge + extraCharge;
 
     box.innerHTML = `
-      <div class="row"><span>${room.name} × ${nights} night${nights>1?'s':''}</span><span>₹${roomCharge.toLocaleString('en-IN')}</span></div>
-      <div class="row"><span>Extra guests (${extraGuests} × ₹1,500 × ${nights}n)</span><span>₹${extraCharge.toLocaleString('en-IN')}</span></div>
+      <div class="row"><span>${room.name} × ${nights} night${nights>1?'s':''} (₹${effectiveRate.toLocaleString('en-IN')}/n)</span><span>₹${roomCharge.toLocaleString('en-IN')}</span></div>
+      <div class="row"><span>Extra guests (${extraGuests} × ₹${extraPersonRate.toLocaleString('en-IN')} × ${nights}n)</span><span>₹${extraCharge.toLocaleString('en-IN')}</span></div>
       <div class="row total"><span>Total</span><span>₹${total.toLocaleString('en-IN')}</span></div>
     `;
-    return { room, nights, extraGuests, total, roomCharge, extraCharge };
+    return { room, nights, extraGuests, total, roomCharge, extraCharge, effectiveRate };
   }
 
   [cfg.roomType, cfg.guests, cfg.checkin, cfg.checkout].forEach(id=>{
@@ -1102,6 +1378,13 @@ if(jeepBtn){
     // 350ms) breaks Safari's user-gesture window and silently blocks the popup.
     const msg = encodeURIComponent("Hello Kurinji Resort, I'd like to enquire about the Jeep Safari — availability, timings and pricing please.");
     openWhatsApp(`https://wa.me/919363004234?text=${msg}`);
+  });
+}
+
+const jeepLocationsBtn = document.getElementById('jeepLocationsBtn');
+if(jeepLocationsBtn){
+  jeepLocationsBtn.addEventListener('click', ()=>{
+    document.getElementById('locationsModal').classList.add('active');
   });
 }
 </script>

@@ -50,7 +50,7 @@ h1,h2,h3{font-family:'Fraunces',serif;color:var(--forest-deep);}
 .panel.active{display:block;}
 
 /* STATS */
-.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:34px;}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:18px;margin-bottom:34px;}
 .stat-card{background:#fff;border-radius:14px;padding:24px;box-shadow:0 8px 20px rgba(22,48,37,.06);}
 .stat-card i{color:var(--terracotta);font-size:1.3rem;margin-bottom:10px;}
 .stat-card strong{display:block;font-family:'Fraunces',serif;font-size:1.7rem;color:var(--forest-deep);}
@@ -79,6 +79,25 @@ td{padding:14px 16px;font-size:.88rem;border-top:1px solid #f0ebda;}
 .mark-btn{background:none;border:1px solid #e2ddc9;padding:6px 12px;border-radius:100px;font-size:.72rem;cursor:pointer;color:#6d6d61;}
 .mark-btn:hover{border-color:var(--terracotta);color:var(--terracotta);}
 .empty-row td{text-align:center;color:#a8a898;padding:40px;}
+.row-check,#selectAllCheckbox{width:16px;height:16px;cursor:pointer;}
+.bulk-delete-btn{border-color:#c23b2e!important;color:#c23b2e!important;}
+.bulk-delete-btn:hover{background:#fde4e1!important;}
+
+/* EXPENSE / RESORT MANAGEMENT PANEL */
+.expense-form-card{background:#fff;border-radius:16px;padding:26px;box-shadow:0 8px 20px rgba(22,48,37,.06);margin-bottom:24px;}
+.expense-form-card h3{margin-bottom:18px;font-size:1.15rem;}
+.expense-form-grid{display:grid;grid-template-columns:1fr 2fr 1fr 1fr auto;gap:12px;align-items:end;}
+.expense-form-grid .ef-field label{display:block;font-size:.78rem;font-weight:600;color:var(--forest-deep);margin-bottom:6px;}
+.expense-form-grid input,.expense-form-grid select{width:100%;padding:11px 14px;border:1.5px solid #e2ddc9;border-radius:10px;font-family:'Work Sans',sans-serif;font-size:.88rem;}
+.expense-summary-row{display:flex;gap:18px;margin-bottom:20px;flex-wrap:wrap;}
+.expense-summary-pill{background:#fff;border-radius:12px;padding:14px 22px;box-shadow:0 8px 20px rgba(22,48,37,.06);}
+.expense-summary-pill span{display:block;font-size:.76rem;color:#8c8c7f;margin-bottom:4px;}
+.expense-summary-pill strong{font-family:'Fraunces',serif;font-size:1.3rem;color:var(--terracotta-dark);}
+.exp-del-btn{background:none;border:1px solid #e2ddc9;padding:6px 12px;border-radius:100px;font-size:.72rem;cursor:pointer;color:#c23b2e;}
+.exp-del-btn:hover{border-color:#c23b2e;background:#fde4e1;}
+@media(max-width:900px){
+  .expense-form-grid{grid-template-columns:1fr 1fr;}
+}
 
 /* ROOM NUMBER ALLOCATION */
 .room-no-pill{display:inline-block;font-size:.76rem;font-weight:700;padding:6px 14px;border-radius:100px;cursor:pointer;transition:.2s;white-space:nowrap;}
@@ -123,9 +142,12 @@ td{padding:14px 16px;font-size:.88rem;border-top:1px solid #f0ebda;}
   .topbar-inner > div:last-child .btn{flex:1;justify-content:center;}
   .table-toolbar{flex-direction:column;align-items:stretch;}
   .table-toolbar .btn{width:100%;justify-content:center;}
+  .toolbar-actions{flex-direction:column;align-items:stretch;}
   .food-add-row{flex-wrap:wrap;}
   .food-add-row input.amt{max-width:none;flex:1 1 100px;}
   .dmodal-amounts{grid-template-columns:1fr;}
+  .expense-form-grid{grid-template-columns:1fr;}
+  .expense-form-grid button{width:100%;justify-content:center;}
 }
 </style>
 </head>
@@ -164,11 +186,14 @@ td{padding:14px 16px;font-size:.88rem;border-top:1px solid #f0ebda;}
       <div class="stat-card"><i class="fas fa-calendar-check"></i><strong id="statUpcoming">—</strong><span>Upcoming Bookings</span></div>
       <div class="stat-card"><i class="fas fa-circle-check"></i><strong id="statCompleted">—</strong><span>Completed Stays</span></div>
       <div class="stat-card"><i class="fas fa-indian-rupee-sign"></i><strong id="statRevenue">—</strong><span>Total Booking Value</span></div>
+      <div class="stat-card"><i class="fas fa-money-bill-wave"></i><strong id="statExpenses">—</strong><span>Total Expenses</span></div>
+      <div class="stat-card"><i class="fas fa-scale-balanced"></i><strong id="statNet">—</strong><span>Net (Revenue − Expenses)</span></div>
     </div>
 
     <div class="tabs">
       <div class="tab-btn active" data-panel="bookingsPanel" onclick="switchPanel('bookingsPanel')">Bookings</div>
       <div class="tab-btn" data-panel="roomsPanel" onclick="switchPanel('roomsPanel')">Manage Rooms</div>
+      <div class="tab-btn" data-panel="resortPanel" onclick="switchPanel('resortPanel')">Resort Management</div>
     </div>
 
     <!-- BOOKINGS PANEL -->
@@ -179,12 +204,15 @@ td{padding:14px 16px;font-size:.88rem;border-top:1px solid #f0ebda;}
           <div class="tab-btn" data-filter="upcoming" onclick="filterBookings('upcoming')">Upcoming</div>
           <div class="tab-btn" data-filter="completed" onclick="filterBookings('completed')">Completed</div>
         </div>
-        <button class="btn btn-primary" onclick="exportExcel()"><i class="fas fa-file-excel"></i> Export Excel Report</button>
+        <div class="toolbar-actions" style="display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn btn-outline btn-sm bulk-delete-btn" id="bulkDeleteBtn" style="display:none;" onclick="deleteSelectedBookings()"><i class="fas fa-trash"></i> Delete Selected (<span id="bulkDeleteCount">0</span>)</button>
+          <button class="btn btn-primary" onclick="exportExcel()"><i class="fas fa-file-excel"></i> Export Excel Report</button>
+        </div>
       </div>
       <div class="table-wrap">
         <table>
           <thead>
-            <tr>
+            <tr id="bookingsTheadRow">
               <th>Guest</th><th>Phone</th><th>Room</th><th>Room No.</th><th>Check-in</th><th>Check-out</th>
               <th>Guests</th><th>Total</th><th>Status</th><th>Action</th>
             </tr>
@@ -199,6 +227,53 @@ td{padding:14px 16px;font-size:.88rem;border-top:1px solid #f0ebda;}
     <!-- ROOMS PANEL -->
     <div class="panel" id="roomsPanel">
       <div class="room-manage-grid" id="roomManageGrid"></div>
+    </div>
+
+    <!-- RESORT MANAGEMENT / EXPENSE TRACKER PANEL -->
+    <div class="panel" id="resortPanel">
+      <div class="expense-form-card">
+        <h3>Add Expense</h3>
+        <div class="expense-form-grid">
+          <div class="ef-field"><label>Date</label><input type="date" id="expDate"></div>
+          <div class="ef-field"><label>Expense Description</label><input type="text" id="expDesc" placeholder="e.g. Grocery / staff salary / repairs"></div>
+          <div class="ef-field">
+            <label>Category</label>
+            <select id="expCategory">
+              <option>Food & Supplies</option>
+              <option>Staff</option>
+              <option>Maintenance</option>
+              <option>Utilities</option>
+              <option>Marketing</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="ef-field"><label>Amount (₹)</label><input type="number" id="expAmount" placeholder="0"></div>
+          <button class="btn btn-primary" onclick="addExpense()"><i class="fas fa-plus"></i> Add</button>
+        </div>
+      </div>
+
+      <div class="expense-summary-row">
+        <div class="expense-summary-pill"><span>Total Expenses</span><strong id="expTotalAll">₹0</strong></div>
+        <div class="expense-summary-pill"><span>This Month</span><strong id="expTotalMonth">₹0</strong></div>
+      </div>
+
+      <div class="table-toolbar">
+        <div class="filter-group">
+          <div class="tab-btn active" data-expfilter="all" onclick="filterExpenses('all')">All</div>
+          <div class="tab-btn" data-expfilter="month" onclick="filterExpenses('month')">This Month</div>
+        </div>
+        <button class="btn btn-primary" onclick="exportExpenses()"><i class="fas fa-file-excel"></i> Export Excel Report</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Date</th><th>Description</th><th>Category</th><th>Amount</th><th>Action</th></tr>
+          </thead>
+          <tbody id="expensesTable">
+            <tr class="empty-row"><td colspan="5">Loading expenses...</td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>
@@ -244,7 +319,7 @@ td{padding:14px 16px;font-size:.88rem;border-top:1px solid #f0ebda;}
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, getDocs, doc, getDoc, setDoc, updateDoc, Timestamp }
+import { getFirestore, collection, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc, addDoc, Timestamp }
   from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
@@ -266,7 +341,9 @@ const ADMIN_PASSWORD = "Kurinji@admin2026";
 const ROOM_TYPES = [
   { id:'standard', name:'Standard Room', defaultRate:4000, defaultCount:4 },
   { id:'deluxe', name:'Deluxe Room', defaultRate:6000, defaultCount:4 },
-  { id:'premium', name:'Premium Villa', defaultRate:20000, defaultCount:1 }
+  { id:'villa2bd', name:'Premium Villa (2 Bedroom, Ground Floor)', defaultRate:10000, defaultCount:1 },
+  { id:'villa3bd', name:'Premium Villa (3 Bedroom, 1st Floor)', defaultRate:15000, defaultCount:1 },
+  { id:'quad', name:'Quad Room (2 Bedroom)', defaultRate:7000, defaultCount:2 }
 ];
 
 window.tryLogin = function(){
@@ -291,10 +368,12 @@ if(sessionStorage.getItem('kurinjiAdminAuth') === 'true'){
 }
 
 let allBookings = [];
+let allExpenses = [];
 
 async function initDashboard(){
   await loadRoomsManage();
   await loadBookings();
+  await loadExpenses();
 }
 
 async function loadRoomsManage(){
@@ -317,8 +396,8 @@ async function loadRoomsManage(){
     grid.insertAdjacentHTML('beforeend', `
       <div class="room-manage-card">
         <h3>${data.name}</h3>
-        <div class="rm-field"><label>Rate per night (₹)</label><input type="number" id="rate-${rt.id}" value="${data.rate}"></div>
-        <div class="rm-field"><label>Room Count</label><input type="number" id="count-${rt.id}" value="${data.count}"></div>
+        <div class="rm-field"><label>Room Rate per night (₹)</label><input type="number" id="rate-${rt.id}" value="${data.rate}"></div>
+        <div class="rm-field"><label>Room Count (Availability)</label><input type="number" id="count-${rt.id}" value="${data.count}"></div>
         <button class="btn btn-primary rm-save" onclick="saveRoom('${rt.id}')"><i class="fas fa-floppy-disk"></i> Save Changes</button>
         <p class="rm-status" id="status-${rt.id}">Saved ✓</p>
       </div>
@@ -331,6 +410,7 @@ window.saveRoom = async function(roomId){
   const rate = parseInt(document.getElementById(`rate-${roomId}`).value);
   const count = parseInt(document.getElementById(`count-${roomId}`).value);
   const rt = ROOM_TYPES.find(r=>r.id===roomId);
+
   try{
     await setDoc(doc(db, "rooms", roomId), { name: rt.name, rate, count });
     const status = document.getElementById(`status-${roomId}`);
@@ -367,17 +447,30 @@ async function loadBookings(){
 }
 
 let currentFilter = 'all';
+let selectedBookingIds = new Set();
+
 window.filterBookings = function(f){
   currentFilter = f;
-  document.querySelectorAll('.filter-group .tab-btn').forEach(t=>t.classList.toggle('active', t.dataset.filter===f));
+  document.querySelectorAll('.filter-group .tab-btn[data-filter]').forEach(t=>t.classList.toggle('active', t.dataset.filter===f));
+  selectedBookingIds.clear();
   renderBookings(f);
 };
 
 function renderBookings(filter){
   const tbody = document.getElementById('bookingsTable');
+  const theadRow = document.getElementById('bookingsTheadRow');
+  const isCompletedView = filter === 'completed';
   const filtered = allBookings.filter(b => filter==='all' ? true : computeStatus(b)===filter);
+
+  theadRow.innerHTML = `
+    ${isCompletedView ? `<th style="width:34px;"><input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this)"></th>` : ''}
+    <th>Guest</th><th>Phone</th><th>Room</th><th>Room No.</th><th>Check-in</th><th>Check-out</th>
+    <th>Guests</th><th>Total</th><th>Status</th><th>Action</th>
+  `;
+
   if(!filtered.length){
-    tbody.innerHTML = `<tr class="empty-row"><td colspan="10">No bookings found.</td></tr>`;
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="${isCompletedView?11:10}">No bookings found.</td></tr>`;
+    updateBulkDeleteBar();
     return;
   }
   tbody.innerHTML = filtered.map(b=>{
@@ -387,6 +480,7 @@ function renderBookings(filter){
       ? `<span class="room-no-pill allocated" onclick="allocateRoom('${b.id}')" title="Click to change">${roomNo}</span>`
       : `<span class="room-no-pill unallocated" onclick="allocateRoom('${b.id}')" title="Click to allocate">Not Allocated</span>`;
     return `<tr>
+      ${isCompletedView ? `<td><input type="checkbox" class="row-check" onchange="toggleRowSelect('${b.id}', this.checked)" ${selectedBookingIds.has(b.id)?'checked':''}></td>` : ''}
       <td>${b.name || '—'}</td>
       <td>${b.phone || '—'}</td>
       <td>${b.roomName || b.roomType || '—'}</td>
@@ -409,6 +503,81 @@ function renderBookings(filter){
       </td>
     </tr>`;
   }).join('');
+  updateBulkDeleteBar();
+}
+
+window.toggleSelectAll = function(checkbox){
+  const filtered = allBookings.filter(b => computeStatus(b)==='completed');
+  if(checkbox.checked){
+    filtered.forEach(b => selectedBookingIds.add(b.id));
+  } else {
+    filtered.forEach(b => selectedBookingIds.delete(b.id));
+  }
+  renderBookings(currentFilter);
+};
+
+window.toggleRowSelect = function(id, checked){
+  if(checked) selectedBookingIds.add(id);
+  else selectedBookingIds.delete(id);
+  updateBulkDeleteBar();
+};
+
+function updateBulkDeleteBar(){
+  const btn = document.getElementById('bulkDeleteBtn');
+  const countEl = document.getElementById('bulkDeleteCount');
+  if(!btn) return;
+  countEl.textContent = selectedBookingIds.size;
+  btn.style.display = (currentFilter==='completed' && selectedBookingIds.size>0) ? 'inline-flex' : 'none';
+}
+
+// ===== BULK DELETE COMPLETED BOOKINGS (with export-first validation) =====
+// Bookings live in the same "bookings" Firestore collection the customer
+// portal reads from, so deleting here removes them from the customer
+// portal automatically — no separate customer-side delete is needed.
+window.deleteSelectedBookings = async function(){
+  const ids = Array.from(selectedBookingIds);
+  if(!ids.length) return;
+  const n = ids.length;
+
+  const wantsExport = confirm(
+    `You are about to permanently delete ${n} booking(s). This cannot be undone.\n\n`+
+    `It's strongly recommended to export these bookings before deleting.\n\n`+
+    `Click OK to export the selected bookings now, or Cancel to skip exporting.`
+  );
+
+  if(wantsExport){
+    exportSelectedBookings(ids);
+    const proceed = confirm(`Export downloaded. Proceed to permanently delete the ${n} selected booking(s) now?`);
+    if(!proceed) return;
+  } else {
+    const proceed = confirm(`Proceed to permanently delete ${n} booking(s) WITHOUT exporting first? This cannot be undone.`);
+    if(!proceed) return;
+  }
+
+  try{
+    for(const id of ids){
+      await deleteDoc(doc(db, "bookings", id));
+    }
+    allBookings = allBookings.filter(b => !ids.includes(b.id));
+    selectedBookingIds.clear();
+    renderBookings(currentFilter);
+    updateStats();
+    alert(`${n} booking(s) deleted successfully.`);
+  }catch(e){
+    alert('Some bookings could not be deleted — check Firebase configuration.');
+    console.warn(e);
+  }
+};
+
+function exportSelectedBookings(ids){
+  const filtered = allBookings.filter(b => ids.includes(b.id));
+  if(!filtered.length){ alert('Nothing to export.'); return; }
+  const rows = buildBookingExportRows(filtered);
+  const ws = XLSX.utils.json_to_sheet(rows);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Bookings");
+  const filename = `Kurinji-Resort-Bookings-Selected-${new Date().toISOString().split('T')[0]}.xlsx`;
+  XLSX.writeFile(wb, filename);
 }
 
 // ===== CONFIRM BOOKING → DRAFT WHATSAPP MESSAGE TO CUSTOMER =====
@@ -591,9 +760,12 @@ function updateStats(){
   const upcoming = allBookings.filter(b=>computeStatus(b)==='upcoming').length;
   const completed = allBookings.filter(b=>computeStatus(b)==='completed').length;
   const revenue = allBookings.reduce((sum,b)=> sum + (b.total||0), 0);
+  const expenses = allExpenses.reduce((sum,e)=> sum + (e.amount||0), 0);
   document.getElementById('statUpcoming').textContent = upcoming;
   document.getElementById('statCompleted').textContent = completed;
   document.getElementById('statRevenue').textContent = '₹' + revenue.toLocaleString('en-IN');
+  document.getElementById('statExpenses').textContent = '₹' + expenses.toLocaleString('en-IN');
+  document.getElementById('statNet').textContent = '₹' + (revenue - expenses).toLocaleString('en-IN');
 }
 
 window.switchPanel = function(panelId){
@@ -601,10 +773,8 @@ window.switchPanel = function(panelId){
   document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active', p.id===panelId));
 };
 
-window.exportExcel = function(){
-  const filtered = allBookings.filter(b => currentFilter==='all' ? true : computeStatus(b)===currentFilter);
-  if(!filtered.length){ alert('No bookings to export in this filter.'); return; }
-  const rows = filtered.map(b=>{
+function buildBookingExportRows(list){
+  return list.map(b=>{
     const advance = b.advanceAmount || 0;
     const total = b.total || 0;
     const foodTotal = (b.foodLog || []).reduce((sum,f)=> sum + (f.amount||0), 0);
@@ -626,10 +796,123 @@ window.exportExcel = function(){
       'Booked On': b.createdAt && b.createdAt.toDate ? b.createdAt.toDate().toLocaleDateString('en-IN') : ''
     };
   });
+}
+
+window.exportExcel = function(){
+  const filtered = allBookings.filter(b => currentFilter==='all' ? true : computeStatus(b)===currentFilter);
+  if(!filtered.length){ alert('No bookings to export in this filter.'); return; }
+  const rows = buildBookingExportRows(filtered);
   const ws = XLSX.utils.json_to_sheet(rows);
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, "Bookings");
   const filename = `Kurinji-Resort-Bookings-${currentFilter}-${new Date().toISOString().split('T')[0]}.xlsx`;
+  XLSX.writeFile(wb, filename);
+};
+
+// ===== RESORT MANAGEMENT — EXPENSE TRACKER =====
+let currentExpenseFilter = 'all';
+
+async function loadExpenses(){
+  const tbody = document.getElementById('expensesTable');
+  try{
+    const snap = await getDocs(collection(db, "expenses"));
+    allExpenses = [];
+    snap.forEach(d => allExpenses.push({ id: d.id, ...d.data() }));
+  }catch(e){
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="5">Could not load expenses — check Firebase configuration.</td></tr>`;
+    console.warn(e);
+    return;
+  }
+  allExpenses.sort((a,b) => new Date(b.date) - new Date(a.date));
+  renderExpenses(currentExpenseFilter);
+  updateStats();
+}
+
+function isThisMonth(dateStr){
+  if(!dateStr) return false;
+  const d = new Date(dateStr);
+  const now = new Date();
+  return d.getMonth()===now.getMonth() && d.getFullYear()===now.getFullYear();
+}
+
+window.filterExpenses = function(f){
+  currentExpenseFilter = f;
+  document.querySelectorAll('.filter-group .tab-btn[data-expfilter]').forEach(t=>t.classList.toggle('active', t.dataset.expfilter===f));
+  renderExpenses(f);
+};
+
+function renderExpenses(filter){
+  const tbody = document.getElementById('expensesTable');
+  const filtered = filter==='month' ? allExpenses.filter(e=>isThisMonth(e.date)) : allExpenses;
+
+  if(!filtered.length){
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="5">No expenses recorded.</td></tr>`;
+  } else {
+    tbody.innerHTML = filtered.map(e=>`
+      <tr>
+        <td>${e.date || '—'}</td>
+        <td>${e.description || '—'}</td>
+        <td>${e.category || '—'}</td>
+        <td>₹${(e.amount||0).toLocaleString('en-IN')}</td>
+        <td><button class="exp-del-btn" onclick="deleteExpense('${e.id}')"><i class="fas fa-trash"></i> Delete</button></td>
+      </tr>
+    `).join('');
+  }
+
+  const totalAll = allExpenses.reduce((sum,e)=> sum + (e.amount||0), 0);
+  const totalMonth = allExpenses.filter(e=>isThisMonth(e.date)).reduce((sum,e)=> sum + (e.amount||0), 0);
+  document.getElementById('expTotalAll').textContent = `₹${totalAll.toLocaleString('en-IN')}`;
+  document.getElementById('expTotalMonth').textContent = `₹${totalMonth.toLocaleString('en-IN')}`;
+}
+
+window.addExpense = async function(){
+  const date = document.getElementById('expDate').value;
+  const description = document.getElementById('expDesc').value.trim();
+  const category = document.getElementById('expCategory').value;
+  const amount = parseFloat(document.getElementById('expAmount').value) || 0;
+
+  if(!date){ alert('Please select a date.'); return; }
+  if(!description){ alert('Please enter what the expense was for.'); return; }
+  if(amount <= 0){ alert('Please enter a valid amount.'); return; }
+
+  try{
+    await addDoc(collection(db, "expenses"), { date, description, category, amount, createdAt: Timestamp.fromDate(new Date()) });
+    document.getElementById('expDate').value = '';
+    document.getElementById('expDesc').value = '';
+    document.getElementById('expAmount').value = '';
+    await loadExpenses();
+  }catch(e){
+    alert('Could not save — check Firebase configuration.');
+    console.warn(e);
+  }
+};
+
+window.deleteExpense = async function(id){
+  if(!confirm('Delete this expense entry? This cannot be undone.')) return;
+  try{
+    await deleteDoc(doc(db, "expenses", id));
+    allExpenses = allExpenses.filter(e => e.id !== id);
+    renderExpenses(currentExpenseFilter);
+    updateStats();
+  }catch(e){
+    alert('Could not delete — check Firebase configuration.');
+    console.warn(e);
+  }
+};
+
+window.exportExpenses = function(){
+  const filtered = currentExpenseFilter==='month' ? allExpenses.filter(e=>isThisMonth(e.date)) : allExpenses;
+  if(!filtered.length){ alert('No expenses to export in this filter.'); return; }
+  const rows = filtered.map(e=>({
+    'Date': e.date || '',
+    'Description': e.description || '',
+    'Category': e.category || '',
+    'Amount (₹)': e.amount || 0
+  }));
+  const ws = XLSX.utils.json_to_sheet(rows);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Expenses");
+  const filename = `Kurinji-Resort-Expenses-${currentExpenseFilter}-${new Date().toISOString().split('T')[0]}.xlsx`;
   XLSX.writeFile(wb, filename);
 };
 </script>
